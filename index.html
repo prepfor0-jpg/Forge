@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#08080a">
-<title>FORGE V3 — Unleashed</title>
+<title>FORGE V5.2 — Adaptive Trainer</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <style>
 :root{
@@ -279,6 +279,23 @@ function selectedExercises(P){let arr=P.e.map((e,i)=>({e,i}));let plan=TIME_PLAN
 function adaptiveTarget(e){let t=e[1];if(sessionTime()==='FULL')return t;if(e[2].includes('MAIN'))return sessionTime()==='15'?'2 × 5–6':'2 × 5–8';return sessionTime()==='15'?'2 × 10–15':sessionTime()==='20'?'2 × 10–15':'2 × 8–15'}
 function adaptiveSets(e){if(sessionTime()==='FULL')return +(e[1].match(/(\d+)\s*[×x]/i)||[,'1'])[1];return TIME_PLAN[sessionTime()].sets}
 function adaptiveList(P){let selected=selectedExercises(P),used=new Set();return selected.map(({e,i})=>({e,i,variant:homeVariant(e,i,used)})).map(x=>{used.add(x.variant);return x})}
+function home(){
+ const t=timeline(), d=t.pre?'Thursday':S.day, P=PROGRAM[d];
+ const st=stepStats(), goal=S.settings.stepsGoal||8000, pct=Math.min(100,Math.round(st.today/goal*100));
+ const done=weekDone(), mins=(S.activities[S.week]||[]).reduce((a,x)=>a+(+x.min||0),0);
+ const mode=sessionMode(), time=sessionTime();
+ if(P.recovery){document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">TODAY // RECOVERY</div><h1>RECOVER LIKE IT MATTERS.</h1><p>${esc(P.q)}</p><div class="quote">${esc(P.focus)}</div></section>
+ <div class="grid g3"><div class="metric"><div class="num">${st.today.toLocaleString()}</div><div class="lbl">Steps today</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div><div class="metric"><div class="num">${S.week}/6</div><div class="lbl">Campaign week</div></div></div>
+ <div class="command red"><div class="eyebrow">TODAY'S MISSION</div><div class="big">30 MIN EASY MOVEMENT</div><div class="tiny" style="margin-top:7px">Walk, mobility, yoga or another easy activity. Keep the engine moving without turning recovery into another hard session.</div><button class="btn primary" style="margin-top:12px" onclick="nav('activity')">LOG RECOVERY →</button></div>`;return;}
+ const selected=adaptiveList(P), names=selected.map(x=>x.variant).join(' • ');
+ document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">WEEK ${S.week} // ${esc(d.toUpperCase())} // ${t.pre?'PREP':'TODAY'}</div><h1>YOUR SESSION IS READY.</h1><p>${esc(P.focus)}</p><div class="quote">“${esc(P.q)}”</div></section>
+ <div class="command red"><div class="between"><div><div class="eyebrow">TODAY'S MISSION</div><div class="big">${esc(P.title)}</div></div><span class="weekpill">${done}/7 WEEK</span></div><div class="tiny" style="margin-top:8px">${esc(names)}</div><button class="btn primary" style="margin-top:12px;width:100%" onclick="nav('workout')">START TODAY'S SESSION →</button></div>
+ <div class="card"><div class="sectionhead"><h2>ADAPT YOUR SESSION</h2><span class="tiny">trainer decides the exercise count</span></div><div class="eyebrow" style="margin:10px 0 7px">ENVIRONMENT</div><div class="row">${['GYM','HOME'].map(x=>`<button class="btn ${mode===x?'primary':''}" onclick="setSessionMode('${x}')">${x==='GYM'?'🏋️ GYM':'🏠 HOME'}</button>`).join('')}</div><div class="eyebrow" style="margin:13px 0 7px">TIME AVAILABLE</div><div class="row">${['15','20','30','FULL'].map(x=>`<button class="btn ${time===x?'primary':''}" onclick="setSessionTime('${x}')">${x==='FULL'?'FULL':x+' MIN'}</button>`).join('')}</div><div class="tiny" style="margin-top:10px">${time==='FULL'?'Full programmed session.':`${time}-minute compressed session: priority movements first, fewer sets, higher-rep accessory work.`}${mode==='HOME'?' Home mode removes gym-only movements and avoids duplicate exercises in the session.':''}</div></div>
+ <div class="grid g3"><div class="metric"><div class="num">${st.today.toLocaleString()}</div><div class="lbl">Steps today</div></div><div class="metric"><div class="num">${pct}%</div><div class="lbl">Step target</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div></div>
+ <div class="card"><div class="sectionhead"><h2>DAILY MOVEMENT</h2><span class="tiny">Target ${goal.toLocaleString()}</span></div><div class="progress"><i style="width:${pct}%"></i></div><div class="grid g2" style="margin-top:9px"><div class="field"><label>Steps today</label><input id="homeSteps" type="number" min="0" value="${st.today||''}" placeholder="8000"></div><div class="field"><label>Target</label><input id="homeGoal" type="number" min="0" value="${goal}"></div></div><button class="btn primary" style="margin-top:9px" onclick="S.steps[dateKey()]=Math.max(0,+homeSteps.value||0);S.settings.stepsGoal=Math.max(0,+homeGoal.value||8000);save();render();toast('STEPS SAVED')">SAVE STEPS →</button></div>
+ <div class="card"><div class="sectionhead"><h2>WEEK ${S.week} // COACH SIGNAL</h2><span class="tiny">${GUIDE[S.week]}</span></div><div class="tiny">${mins} activity minutes logged this week. ${done>=5?'Consistency target met.':'Log the work you actually complete — no fake sessions.'}</div></div>`;
+}
+
 function workout(){
  const t=timeline(),d=t.pre?'Thursday':S.day,P=PROGRAM[d],L=S.logs[`w${S.week}_${d}`]||{sets:{},completed:false};
  if(P.recovery){document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">RECOVERY COMMAND</div><h1>${P.title}</h1><p>${P.q}</p></section><div class="command"><div class="big">${P.focus}</div><div class="tiny" style="margin-top:7px">Log mobility, swimming, walking, cycling or another activity. Recovery days are part of the campaign.</div><button class="btn primary" style="margin-top:13px" onclick="nav('activity')">LOG ACTIVITY →</button></div>`;return}
