@@ -1,19 +1,7 @@
-# FORGE V5 — Command Center
+FORGE V5.2 — ADAPTIVE TRAINER
 
-Exact replacement files for the GitHub Pages root.
+Exact replacement package. Replace the root files with these exact filenames.
 
-Replace:
-- index.html
-- manifest.webmanifest
-- sw.js
-- icon.svg
+New: GYM/HOME switch, 15/20/30/FULL adaptive sessions, unique home movements per session, compact higher-rep execution, adaptive load suggestions, ramp guidance, steps, checkpoints and superset builder.
 
-V5 additions:
-- Daily step tracking + configurable target
-- Campaign checkpoints: W1 / W3 / W5 / W6
-- Actual FORGE SVG logo + PWA icon
-- Ramp-up suggestions before working sets
-- Suggested next working load from prior performance
-- Superset builder with active SS badges
-- Fixed V5 service-worker cache invalidation
-- Existing workout, RIR, PR, activity, body and JSON functionality retained
+Files: index.html, manifest.webmanifest, sw.js, icon-v52.svg, README.md
