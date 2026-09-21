@@ -3,258 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#09090b">
-<title>FORGE V3 — Personal Training OS</title>
+<meta name="theme-color" content="#08080a">
+<title>FORGE V3 — Unleashed</title>
+<link rel="manifest" href="./manifest.webmanifest">
 <style>
-:root{
- --bg:#070708;--panel:#111114;--panel2:#18181d;--panel3:#202027;
- --red:#e5092f;--red2:#ff3657;--redDark:#5d0b19;--white:#f5f5f6;
- --muted:#a5a5ad;--line:#303039;--green:#4ade80;--amber:#fbbf24;
-}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;background:
- radial-gradient(circle at 85% 0%,rgba(229,9,47,.13),transparent 28%),
- linear-gradient(180deg,#070708,#0a0a0c 55%,#070708);
- color:var(--white);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:88px}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-.app{max-width:760px;margin:auto}.top{position:sticky;top:0;z-index:50;
- background:rgba(7,7,8,.94);backdrop-filter:blur(14px);border-bottom:1px solid #24242a;
- padding:12px 15px 10px}
-.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.logo{font-size:21px;font-weight:1000;letter-spacing:1.5px}.logo em{color:var(--red);font-style:normal}
-.mini{font-size:10px;color:var(--muted);letter-spacing:.7px;margin-top:2px}
-.content{padding:13px}.hero{border:1px solid #5b1724;border-radius:20px;padding:18px;
- background:linear-gradient(135deg,#240910 0%,#15151a 48%,#0c0c0f 100%);
- box-shadow:0 12px 35px rgba(0,0,0,.28);overflow:hidden;position:relative}
-.hero:after{content:"";position:absolute;right:-50px;top:-70px;width:170px;height:170px;border-radius:50%;
- background:radial-gradient(circle,rgba(229,9,47,.24),transparent 68%)}
-.kicker{font-size:10px;font-weight:900;color:#ff7187;letter-spacing:1.5px}
-.hero h1{margin:4px 0 5px;font-size:32px;line-height:1;font-weight:1000;letter-spacing:.5px}
-.hero p{margin:0;color:#d0d0d5;font-size:13px;max-width:620px}
-.quote{margin-top:13px;font-size:13px;font-weight:850;font-style:italic;color:#fff}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.card{background:rgba(17,17,20,.96);border:1px solid var(--line);border-radius:17px;padding:13px;margin:10px 0}
-.card h2{font-size:15px;margin:0 0 10px;font-weight:950}.card h3{font-size:13px;margin:12px 0 7px}
-.field label{display:block;color:var(--muted);font-size:10px;font-weight:750;margin:0 0 5px}
-.field input,.field select,.field textarea{width:100%;background:#0a0a0d;border:1px solid #34343d;color:#fff;border-radius:10px;padding:10px;outline:none}
-.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}
-.btn{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-weight:850;color:#fff;background:#24242b}
-.btn.primary{background:var(--red);border-color:var(--red)}.btn.ghost{background:transparent}
-.btn.green{background:#124523;border-color:#1f7a3b;color:#9af0b8}.btn.danger{background:#3d1019;border-color:#741c2c;color:#ff9bab}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:11px 0}.tab{padding:9px 4px;border-radius:11px;
- border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:11px;font-weight:900}.tab.active{background:var(--red);border-color:var(--red);color:white}
-.daychips{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:9px 0}.daychip{padding:9px 2px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:10px;font-weight:900}.daychip.active{background:#5d0b19;border-color:var(--red);color:#fff}
-.stat{background:#101014;border:1px solid var(--line);border-radius:13px;padding:10px}.stat .num{font-size:22px;font-weight:1000}.stat .lab{font-size:10px;color:var(--muted);margin-top:1px}
-.progress{height:8px;background:#282830;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--red),#ff6077);width:0}
-.exercise{background:#101014;border:1px solid #2e2e36;border-radius:14px;padding:11px;margin:8px 0}
-.exercise.main{border-color:#6a1a29;box-shadow:inset 3px 0 var(--red)}
-.exhead{display:flex;justify-content:space-between;gap:7px}.exname{font-weight:950;font-size:13px}.tag{font-size:9px;padding:4px 6px;border-radius:99px;background:#2d1118;color:#ff9bac;white-space:nowrap}
-.meta{font-size:10px;color:var(--muted);margin-top:2px}.setgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
-.setgrid input{width:100%;background:#08080a;border:1px solid #303039;color:#fff;border-radius:8px;padding:9px 4px;text-align:center;font-size:11px}
-.check{display:flex;gap:7px;align-items:center;font-size:11px;color:#ddd}.check input{width:17px;height:17px;accent-color:var(--red)}
-.alt{margin-top:8px;padding:8px;border-radius:9px;background:#18181e;color:#bfc0c6;font-size:10px;line-height:1.45}.alt b{color:#ff7187}
-.ramp{padding:9px;border-radius:10px;background:linear-gradient(90deg,#17171c,#121216);border-left:3px solid var(--red);font-size:10px;color:#d0d0d5;line-height:1.5}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:99px;font-size:10px;font-weight:900;background:#24242b;color:#ddd}
-.badge.red{background:#42101b;color:#ff9cac}.badge.green{background:#10351f;color:#8ff0ad}
-.bottom{position:fixed;z-index:60;left:0;right:0;bottom:0;background:rgba(10,10,12,.97);border-top:1px solid #2b2b32;
- padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.bottom button{border:0;background:transparent;color:#888a93;font-size:9px;font-weight:900}.bottom button.active{color:#fff}.bottom b{display:block;font-size:18px;margin-bottom:1px}
-.toast{position:fixed;z-index:100;left:50%;bottom:90px;transform:translateX(-50%);background:#f4f4f5;color:#111;padding:10px 14px;border-radius:99px;font-size:11px;font-weight:900;display:none;box-shadow:0 8px 25px #0008}
-.hidden{display:none!important}.tiny{font-size:10px;color:var(--muted)}.muted{color:var(--muted)}
-.item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#101014;border:1px solid var(--line);border-radius:11px;padding:10px;margin:6px 0}
-.activity{background:#111116;border:1px solid #303039;border-radius:12px;padding:10px}
-.timer{font-size:38px;font-weight:1000;letter-spacing:1px;text-align:center;padding:5px}.center{text-align:center}
-hr{border:0;border-top:1px solid var(--line);margin:12px 0}
-@media(max-width:430px){.content{padding:9px}.hero h1{font-size:27px}.grid2{grid-template-columns:1fr}.setgrid{grid-template-columns:repeat(2,1fr)}.daychips{gap:4px}.daychip{font-size:9px}}
-
-/* V3 UNLEASHED */
-.v3grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.v3panel{background:#0f0f13;border:1px solid #34343d;border-radius:14px;padding:12px;margin:9px 0}.v3metric{font-size:24px;font-weight:1000}.v3label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}.v3bar{height:7px;background:#27272e;border-radius:99px;overflow:hidden}.v3bar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),#ff667e)}.pr{border-left:3px solid var(--amber);background:#17151a}.coach{border-left:3px solid var(--red);background:linear-gradient(90deg,#1c0d12,#111116)}.dangerline{color:#ff9aa9}.goodline{color:#91efae}.compact .exercise{padding:8px;margin:5px 0}.compact .alt{display:none}.compact .setgrid input{padding:7px}.spark{display:flex;align-items:end;gap:4px;height:60px}.spark i{flex:1;background:linear-gradient(180deg,var(--red2),var(--redDark));min-height:4px;border-radius:3px 3px 0 0}.smallbtn{padding:6px 8px;font-size:10px}.weekreview{background:#151116;border:1px solid #4a1724;border-radius:13px;padding:12px}.ach{display:flex;gap:8px;align-items:center}.ach b{font-size:20px}.subtle{font-size:11px;color:#b9bac1}
-@media(max-width:560px){.v3grid{grid-template-columns:repeat(2,1fr)}}
+:root{--bg:#070708;--card:#111115;--card2:#18181e;--line:#303039;--red:#e5092f;--red2:#ff4664;--muted:#a6a6af;--green:#55e58b;--amber:#ffc44d;--white:#f7f7f8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0,#350914 0,transparent 30%),linear-gradient(#070708,#0a0a0d 55%,#070708);color:var(--white);font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding-bottom:82px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:820px;margin:auto}.top{position:sticky;top:0;z-index:20;background:#08080af2;backdrop-filter:blur(14px);border-bottom:1px solid #24242a;padding:12px 14px}.brand{font-weight:1000;letter-spacing:1.5px;font-size:21px}.brand em{color:var(--red);font-style:normal}.sub{font-size:9px;color:var(--muted);letter-spacing:1px}.content{padding:12px}.hero,.card,.panel{border:1px solid var(--line);border-radius:17px;background:#111115eF;padding:14px;margin:10px 0}.hero{border-color:#651a29;background:linear-gradient(135deg,#270a11,#141419 55%,#0d0d10)}h1{font-size:30px;line-height:1;margin:5px 0 7px}h2{font-size:15px;margin:0 0 10px}h3{font-size:13px}.kicker{font-size:9px;color:#ff7890;font-weight:900;letter-spacing:1.4px}.muted,.tiny{color:var(--muted);font-size:10px}.quote{font-weight:850;font-size:12px;font-style:italic;margin-top:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.between{display:flex;justify-content:space-between;gap:8px;align-items:center}.stat{background:#0f0f13;border:1px solid var(--line);border-radius:12px;padding:10px}.num{font-size:22px;font-weight:1000}.label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.btn{border:1px solid var(--line);background:#25252c;color:#fff;border-radius:9px;padding:8px 11px;font-weight:850;font-size:11px}.btn.primary{background:var(--red);border-color:var(--red)}.btn.green{background:#10391f;border-color:#286c3d;color:#9bf3b8}.btn.danger{background:#3a1018;border-color:#721c2b;color:#ff9bab}.btn.ghost{background:transparent}.field label{display:block;font-size:9px;color:var(--muted);margin-bottom:4px}.field input,.field select,.field textarea{width:100%;padding:9px;border:1px solid #34343d;border-radius:9px;background:#09090c;color:#fff}.field textarea{min-height:70px}.progress{height:7px;border-radius:99px;background:#292930;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--red2));border-radius:99px}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.day{background:#101014;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:8px 2px;font-size:9px;font-weight:900}.day.active{background:#5d0b19;border-color:var(--red);color:#fff}.badge{display:inline-flex;padding:4px 7px;border-radius:99px;background:#27272e;color:#ddd;font-size:9px;font-weight:900}.badge.red{background:#42101b;color:#ff9bac}.badge.green{background:#103a20;color:#94f1b1}.exercise{background:#101014;border:1px solid #303039;border-radius:13px;padding:10px;margin:7px 0}.exercise.main{border-color:#6b1a2a;box-shadow:inset 3px 0 var(--red)}.exname{font-weight:950;font-size:13px}.meta{font-size:9px;color:var(--muted)}.sets{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}.sets input{width:100%;padding:8px 3px;text-align:center;background:#08080a;border:1px solid #303039;color:#fff;border-radius:7px;font-size:10px}.alt{margin-top:7px;padding:7px;background:#19191f;border-radius:8px;font-size:9px;color:#c3c3c9}.alt b{color:#ff738a}.check{font-size:10px;display:flex;gap:5px;align-items:center}.check input{accent-color:var(--red)}.coach{border-left:3px solid var(--red);background:linear-gradient(90deg,#1c0c12,#111115)}.pr{border-left:3px solid var(--amber)}table{width:100%;border-collapse:collapse;font-size:10px}th,td{padding:7px;border-bottom:1px solid var(--line);text-align:left}.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#0b0b0df7;border-top:1px solid #292930;padding:7px 7px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(7,1fr)}.bottom button{border:0;background:transparent;color:#85858e;font-size:8px;font-weight:900}.bottom button.active{color:#fff}.bottom b{display:block;font-size:17px}.timer{text-align:center;font-size:38px;font-weight:1000}.toast{position:fixed;z-index:50;bottom:90px;left:50%;transform:translateX(-50%);background:#f4f4f5;color:#111;padding:9px 13px;border-radius:99px;font-size:10px;font-weight:900;display:none}.spark{height:65px;display:flex;align-items:end;gap:4px}.spark i{flex:1;background:linear-gradient(#ff4967,#5d0b19);border-radius:3px 3px 0 0;min-height:3px}.hidden{display:none!important}@media(max-width:480px){.grid3{grid-template-columns:1fr 1fr 1fr}.grid4{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}h1{font-size:26px}.sets{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="topline"><div><div class="logo">FORGE <em>///</em> V3</div><div class="mini">UNLEASHED • PERSONAL TRAINING OS</div></div><span class="badge red" id="weekBadge">WEEK 1</span></div></header>
-<main class="content" id="app"></main>
+<header class="top"><div class="between"><div><div class="brand">FORGE <em>///</em> V3</div><div class="sub">UNLEASHED • PERSONAL TRAINING OS</div></div><span id="weekBadge" class="badge red">W1</span></div></header>
+<main id="app" class="content"></main>
 <nav class="bottom">
-<button data-nav="home"><b>⚡</b>Dashboard</button>
-<button data-nav="workout"><b>🏋️</b>Workout</button>
-<button data-nav="history"><b>📈</b>History</button>
-<button data-nav="activity"><b>❤️</b>Activity</button>
-<button data-nav="body"><b>📏</b>Body</button>
-<button data-nav="coach"><b>🧠</b>Coach</button>
-<button data-nav="data"><b>💾</b>Data</button>
-</nav>
-<div class="toast" id="toast"></div>
+<button data-n="home"><b>⚡</b>Home</button><button data-n="workout"><b>🏋️</b>Train</button><button data-n="history"><b>📈</b>History</button><button data-n="activity"><b>❤️</b>Activity</button><button data-n="body"><b>📏</b>Body</button><button data-n="coach"><b>🧠</b>Coach</button><button data-n="data"><b>💾</b>Data</button>
+</nav><div id="toast" class="toast"></div>
 </div>
-
 <script>
-const KEY='FORGE_PT_v2';
+const KEY='FORGE_PT_V3';
 const START='2026-09-24';
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const PROGRAM={
-Monday:{title:'LEGS',focus:'Strength + athletic foundation',quote:'Strong legs. Strong base. Stronger you.',ex:[
-['Back Squat','4 × 5','MAIN • STRENGTH',['Goblet squat / DB front squat / Smith squat']],
-['Romanian Deadlift','3 × 8','STRENGTH + THICKNESS',['DB RDL / good morning']],
-['Bulgarian Split Squat','3 × 8/leg','UNILATERAL',['Reverse lunge / step-up']],
-['Leg Curl','3 × 10–12','HYPERTROPHY',['Nordic / sliding curl / DB hamstring curl']],
-['Walking Lunge','2 × 10/leg','ATHLETIC',['Reverse lunge / static lunge']],
-['Calf Raise','4 × 10–15','ACCESSORY',['Single-leg DB calf raise / seated calf']],
-['Farmer Carry','3 × 30–45s','GRIP + TRAPS',['Heavy DB carry / suitcase carry']]
-]},
-Tuesday:{title:'SHOULDERS + ARMS',focus:'Home-primary hypertrophy + arm size',quote:'Build the arms. Build the discipline.',home:true,ex:[
-['DB Shoulder Press','3 × 6–10','MAIN',['Seated DB press']],
-['Lateral Raise','4 × 12–15','ISOLATION',['Leaning DB raise / partials at end']],
-['Rear-Delt Fly','3 × 12–15','ISOLATION',['Incline rear-delt fly']],
-['DB Curl','3 × 8–10','BICEPS',['Alternating / supinating DB curl']],
-['Incline DB Curl','3 × 10','BICEPS PEAK',['Concentration curl']],
-['Hammer Curl','2 × 10–12','BRACHIALIS',['Cross-body hammer curl']],
-['Close-Grip DB Press','3 × 6–8','TRICEPS',['Close-grip push-up / DB floor press']],
-['DB Overhead Triceps Extension','2 × 12–15','TRICEPS',['One-DB overhead extension']]
-]},
-Thursday:{title:'BACK + BICEPS',focus:'Strength + thickness + V-taper',quote:'A thick back is built one heavy, clean rep at a time.',ex:[
-['Deadlift','3 × 4','MAIN • STRENGTH',['Heavy DB RDL / trap-bar deadlift']],
-['Pull-ups','4 × 5–8','LATS',['Assisted pull-up / lat pulldown']],
-['Barbell Row','3 × 6–8','THICKNESS',['Heavy 1-arm DB row']],
-['Chest-Supported Row','3 × 8–12','THICKNESS',['Chest-supported DB row on bench']],
-['Lat Pulldown','2 × 10–12','LATS',['DB pullover / band pulldown']],
-['Face Pull','3 × 12–15','REAR DELTS',['Incline rear-delt fly / band face pull']],
-['EZ-Bar Curl','3 × 8–10','BICEPS',['DB curl']],
-['Cable Curl','2 × 12–15','ISOLATION',['Incline DB curl / concentration curl']]
-]},
-Friday:{title:'ATHLETIC FULL BODY',focus:'Power + strength + conditioning',quote:'Train to be useful, powerful and hard to break.',ex:[
-['Broad / Box Jump','3 × 3','POWER',['Broad jump']],
-['Front Squat','3 × 5','STRENGTH',['DB front squat / goblet squat']],
-['DB Bench Press','3 × 8','UPPER STRENGTH',['Push-up / DB floor press']],
-['1-Arm DB Row','3 × 8/side','BACK + STABILITY',['Bench-supported DB row']],
-['KB / DB Swing','3 × 12','POWER',['DB swing / DB RDL']],
-['Farmer Carry','3 × 40s','GRIP + TRAPS',['Heavy DB farmer carry']],
-['Sled Push / Intervals','6–8 rounds','CONDITIONING',['30s hard + 90s easy: bike/run/stairs']]
-]},
-Saturday:{title:'CHEST + TRICEPS',focus:'Strength + hypertrophy',quote:'Press with intent. Build with patience.',ex:[
-['Bench Press','4 × 5','MAIN • STRENGTH',['DB bench / Smith / machine press']],
-['Incline DB Press','3 × 8–10','HYPERTROPHY',['Incline push-up / DB press']],
-['Weighted Dips','3 × 6–10','CHEST + TRICEPS',['Assisted dips / close-grip push-up']],
-['Cable Fly','3 × 12–15','ISOLATION',['DB fly / squeeze press']],
-['Skull Crusher','3 × 8–10','TRICEPS',['DB skull crusher / DB overhead extension']],
-['Pushdown','3 × 10–15','ISOLATION',['Band pushdown']],
-['Overhead Extension','2 × 12–15','ISOLATION',['DB overhead extension']]
-]},
-Wednesday:{title:'RECOVERY',focus:'Mobility + easy movement',quote:'Recovery is training you do not skip.',recovery:true},
-Sunday:{title:'ZONE 2 + RECOVERY',focus:'Cardiovascular fitness + recovery',quote:'Move today. Come back stronger.',recovery:true}
+Monday:{title:'LEGS',focus:'Strength + athletic foundation',q:'Strong legs. Strong base. Stronger you.',e:[
+['Back Squat','4 × 5','MAIN • STRENGTH',['Goblet squat','DB front squat','Smith squat']],
+['Romanian Deadlift','3 × 8','STRENGTH + THICKNESS',['DB RDL','Good morning']],
+['Bulgarian Split Squat','3 × 8/leg','UNILATERAL',['Reverse lunge','Step-up']],
+['Leg Curl','3 × 10–12','HYPERTROPHY',['Nordic','Sliding curl','DB hamstring curl']],
+['Walking Lunge','2 × 10/leg','ATHLETIC',['Reverse lunge','Static lunge']],
+['Calf Raise','4 × 10–15','ACCESSORY',['Single-leg DB calf raise','Seated calf']],
+['Farmer Carry','3 × 30–45s','GRIP + TRAPS',['Heavy DB carry','Suitcase carry']]]},
+Tuesday:{title:'SHOULDERS + ARMS',focus:'Home-primary hypertrophy + arm size',q:'Build the arms. Build the discipline.',e:[
+['DB Shoulder Press','3 × 6–10','MAIN',['Seated DB press']],['Lateral Raise','4 × 12–15','ISOLATION',['Leaning DB raise']],['Rear-Delt Fly','3 × 12–15','ISOLATION',['Incline rear-delt fly']],['DB Curl','3 × 8–10','BICEPS',['Alternating DB curl']],['Incline DB Curl','3 × 10','BICEPS PEAK',['Concentration curl']],['Hammer Curl','2 × 10–12','BRACHIALIS',['Cross-body hammer curl']],['Close-Grip DB Press','3 × 6–8','TRICEPS',['Close-grip push-up','DB floor press']],['DB Overhead Triceps Extension','2 × 12–15','TRICEPS',['One-DB overhead extension']]]},
+Thursday:{title:'BACK + BICEPS',focus:'Strength + thickness + V-taper',q:'A thick back is built one clean rep at a time.',e:[
+['Deadlift','3 × 4','MAIN • STRENGTH',['Heavy DB RDL','Trap-bar deadlift']],['Pull-ups','4 × 5–8','LATS',['Assisted pull-up','Lat pulldown']],['Barbell Row','3 × 6–8','THICKNESS',['Heavy 1-arm DB row']],['Chest-Supported Row','3 × 8–12','THICKNESS',['Chest-supported DB row']],['Lat Pulldown','2 × 10–12','LATS',['DB pullover','Band pulldown']],['Face Pull','3 × 12–15','REAR DELTS',['Incline rear-delt fly','Band face pull']],['EZ-Bar Curl','3 × 8–10','BICEPS',['DB curl']],['Cable Curl','2 × 12–15','ISOLATION',['Incline DB curl','Concentration curl']]]},
+Friday:{title:'ATHLETIC FULL BODY',focus:'Power + strength + conditioning',q:'Train to be useful, powerful and hard to break.',e:[
+['Broad / Box Jump','3 × 3','POWER',['Broad jump']],['Front Squat','3 × 5','STRENGTH',['DB front squat','Goblet squat']],['DB Bench Press','3 × 8','UPPER STRENGTH',['Push-up','DB floor press']],['1-Arm DB Row','3 × 8/side','BACK + STABILITY',['Bench-supported DB row']],['KB / DB Swing','3 × 12','POWER',['DB swing','DB RDL']],['Farmer Carry','3 × 40s','GRIP + TRAPS',['Heavy DB farmer carry']],['Sled Push / Intervals','6–8 rounds','CONDITIONING',['30s hard + 90s easy: bike/run/stairs']]]},
+Saturday:{title:'CHEST + TRICEPS',focus:'Strength + hypertrophy',q:'Press with intent. Build with patience.',e:[
+['Bench Press','4 × 5','MAIN • STRENGTH',['DB bench','Smith press','Machine press']],['Incline DB Press','3 × 8–10','HYPERTROPHY',['Incline push-up','DB press']],['Weighted Dips','3 × 6–10','CHEST + TRICEPS',['Assisted dips','Close-grip push-up']],['Cable Fly','3 × 12–15','ISOLATION',['DB fly','Squeeze press']],['Skull Crusher','3 × 8–10','TRICEPS',['DB skull crusher','DB overhead extension']],['Pushdown','3 × 10–15','ISOLATION',['Band pushdown']],['Overhead Extension','2 × 12–15','ISOLATION',['DB overhead extension']]]},
+Wednesday:{title:'RECOVERY',focus:'Mobility + easy movement',q:'Recovery is training you do not skip.',recovery:true},
+Sunday:{title:'ZONE 2 + RECOVERY',focus:'Cardiovascular fitness + recovery',q:'Move today. Come back stronger.',recovery:true}
 };
-const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const weekGuide={
-1:'BUILD THE BASE — learn working weights, keep RIR 2–3, clean technique.',
-2:'BUILD — add a rep or a small load increase where earned.',
-3:'PROGRESS — compounds around RIR 2; isolation around RIR 1–2.',
-4:'PUSH — maintain form; selected isolation work may use one intensity technique.',
-5:'CONSOLIDATE — strongest quality week; do not chase failure everywhere.',
-6:'DELOAD + REVIEW — reduce load ~10–20% OR sets ~30–40%, keep RIR 3–4, finish fresh.'
-};
-function fresh(){return {version:3,profile:{name:'',startDate:START,targetWeight:'64–65 kg'},week:1,day:'Thursday',
- logs:{},activities:{},body:{current:{},weeks:{},history:[]},habits:{},weekly:{},readiness:{},settings:{restTimer:90},prs:{}}}
-function migrate(x){if(!x)return fresh();if(x.version>=3){x.body=x.body||{current:{},weeks:{},history:[]};x.body.history=x.body.history||[];x.readiness=x.readiness||{};x.prs=x.prs||{};x.settings=x.settings||{restTimer:90};return x;} x.version=3;x.body=x.body||{current:{},weeks:{}};x.body.history=x.body.history||[];x.readiness=x.readiness||{};x.prs=x.prs||{};return x}
-function load(){try{return migrate(JSON.parse(localStorage.getItem(KEY))||fresh())}catch(e){return fresh()}}
-let S=load();
+const GUIDE={1:'Build the base • RIR 2–3',2:'Build • add a rep or small load when earned',3:'Progress • compounds RIR ~2, isolation RIR 1–2',4:'Push • selected isolation intensity only',5:'Consolidate • quality over failure',6:'Deload + review • reduce load 10–20% OR sets 30–40%, RIR 3–4'};
+function fresh(){return {version:3,week:1,day:'Thursday',profile:{name:'',startDate:START,targetWeight:'64–65 kg'},logs:{},activities:{},body:{current:{},weeks:{}},readiness:{},settings:{rest:90}}}
+let S=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){return fresh()}})();
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
-function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function toast(s){const t=document.getElementById('toast');t.textContent=s;t.style.display='block';clearTimeout(window.__t);window.__t=setTimeout(()=>t.style.display='none',1600)}
-function nav(p){location.hash=p;render()}
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
-window.addEventListener('hashchange',render);
-function currentKey(){return `w${S.week}_${S.day}`}
-function getLog(){const k=currentKey();S.logs[k]=S.logs[k]||{sets:{},done:{},rir:{},notes:''};return S.logs[k]}
-function setWeek(v){S.week=+v;save();render()}
-function setDay(d){S.day=d;save();render()}
-function weekSelect(){return `<select onchange="setWeek(this.value)">${[1,2,3,4,5,6].map(w=>`<option value="${w}" ${S.week===w?'selected':''}>Week ${w}</option>`).join('')}</select>`}
-function dayChips(){return `<div class="daychips">${days.map(d=>`<button class="daychip ${S.day===d?'active':''}" onclick="setDay('${d}')">${d.slice(0,3)}</button>`).join('')}</div>`}
-function topHero(){let p=PROGRAM[S.day];return `<div class="hero"><div class="between"><div><div class="kicker">6-WEEK FORGE PROGRAM • STARTS THU 24 SEP</div><h1>${p.title}</h1><p>${p.focus}</p></div>${weekSelect()}</div><div class="quote">“${p.quote}”</div><div style="margin-top:12px"><div class="between tiny"><span>PROGRAM PROGRESS</span><span>WEEK ${S.week}/6</span></div><div class="progress"><i style="width:${S.week/6*100}%"></i></div></div></div>`}
-function workoutPage(){
-const p=PROGRAM[S.day], log=getLog();
-let body='';
-if(p.recovery){
-body=`<div class="card"><h2>❤️ Recovery session</h2><div class="ramp"><b>Primary:</b> 30–60 min Zone 2 + 10–15 min mobility.<br><b>Examples:</b> brisk walk, easy jog, cycling, swimming, rowing, hiking.<br><b>Intensity:</b> conversational / RPE 3–4. If you did another sport, log it instead — the app counts the activity toward your week.</div>
-<div class="grid2" style="margin-top:10px"><div class="field"><label>Duration (min)</label><input inputmode="numeric" value="${esc(log.duration||'')}" onchange="setLog('duration',this.value)"></div><div class="field"><label>RPE 1–10</label><input inputmode="numeric" value="${esc(log.rpe||'')}" onchange="setLog('rpe',this.value)"></div></div>
-<div class="row" style="margin-top:10px">${['Zone 2','Mobility','Swimming','Walking','Cycling','Other sport'].map(x=>`<button class="btn ${log.activity===x?'primary':''}" onclick="setLog('activity','${x}')">${x}</button>`).join('')}</div></div>`;
-}else{
-body=`<div class="card"><h2>🔥 Warm-up + ramp sets</h2><div class="ramp"><b>General:</b> 3–5 min easy cardio + dynamic mobility.<br><b>First main lift:</b> empty/light × 8–10 → ~50% × 5 → ~65% × 3 → ~75–80% × 1–2 → working sets.<br><b>Later compounds:</b> usually 1–2 lighter ramp sets. Isolation exercises normally need no formal ramp unless the first set feels heavy.</div></div>`;
-body+=p.ex.map((e,i)=>exerciseCard(e,i,log)).join('');
-}
-document.getElementById('app').innerHTML=topHero()+dayChips()+`<div class="v3panel coach"><b>🧠 TODAY'S COACH</b><div class="subtle">${coachSignals()[0][1]}</div></div>`+body+`
-<div class="card"><div class="between"><h2>⏱ Rest timer</h2><span class="badge" id="timerState">Ready</span></div><div class="timer" id="timer">01:30</div><div class="row"><button class="btn primary" onclick="startTimer(90)">90s</button><button class="btn secondary" onclick="startTimer(120)">2 min</button><button class="btn secondary" onclick="startTimer(180)">3 min</button><button class="btn ghost" onclick="stopTimer()">Stop</button></div></div>
-<div class="card"><h2>📝 Session notes</h2><div class="field"><textarea placeholder="Best set, technique, pain, energy, anything worth remembering..." onchange="setLog('notes',this.value)">${esc(log.notes||'')}</textarea></div><div class="row" style="margin-top:9px"><label class="check"><input type="checkbox" ${log.completed?'checked':''} onchange="setLog('completed',this.checked)"> Session completed</label></div></div>`;
-}
-function completeDay(){getLog().completed=true;save();render();toast('DAY SAVED — KEEP THE STREAK')}
-function clearCurrentDay(){if(confirm("Clear this day’s workout log?")){delete S.logs[currentKey()];save();render();toast('DAY CLEARED')}}
-function toggleCompact(){document.body.classList.toggle('compact');toast(document.body.classList.contains('compact')?'15–20 MIN MODE ON':'FULL SESSION MODE')}
-function parseSet(v){let m=String(v||'').match(/([0-9]+(?:\.[0-9]+)?)\s*[x×]\s*([0-9]+)/i);return m?{kg:+m[1],reps:+m[2]}:null}
-function allLifts(){let out=[];Object.entries(S.logs).forEach(([key,l])=>{let day=key.split('_').slice(1).join('_');(l.sets||{}).forEach?.(()=>{});Object.keys(l.sets||{}).forEach(i=>{(l.sets[i]||[]).forEach((v,j)=>{let p=parseSet(v);if(p&&PROGRAM[day]?.ex[i])out.push({date:key,day,exercise:PROGRAM[day].ex[i][0],kg:p.kg,reps:p.reps,rir:+(l.rir?.[i]||99),volume:p.kg*p.reps})})})});return out}
-function prs(){let map={};allLifts().forEach(x=>{let m=map[x.exercise]||{weight:0,reps:0,volume:0};m.weight=Math.max(m.weight,x.kg);m.reps=Math.max(m.reps,x.reps);m.volume+=x.volume;map[x.exercise]=m});return map}
-function coachSignals(){let lifts=allLifts(), p=prs(), sig=[];let low=lifts.filter(x=>x.rir<=1&&x.rir!==99).length, high=lifts.filter(x=>x.rir>=3&&x.rir!==99).length;if(!lifts.length)sig.push(['START','Log your first clean working sets. We need real data before changing loads.','coach']);else{if(low>5)sig.push(['FATIGUE','Several sets are at RIR 0–1. Keep compounds shy of failure and protect recovery.','dangerline']);if(high>5)sig.push(['PROGRESSION','You have multiple sets at RIR 3+. If all reps are clean, consider a small load increase next exposure.','goodline']);if(!low&&!high)sig.push(['BALANCED','Your logged effort is sitting in a productive range. Repeat or add a small load when earned.','coach']);}if(S.week===6)sig.push(['DELOAD','Week 6: reduce load ~10–20% OR sets ~30–40%; keep RIR 3–4.','coach']);return sig}
-function exerciseCard(e,i,log){
-let vals=log.sets[i]||['','','','']; let main=i===0||e[2].includes('MAIN');
-return `<div class="exercise ${main?'main':''}"><div class="exhead"><div><div class="exname">${e[0]}</div><div class="meta">${e[1]} • ${e[2]}</div></div><span class="tag">${main?'RAMP + WORK':'WORKING SETS'}</span></div>
-<div class="setgrid">${vals.map((v,j)=>`<input inputmode="text" placeholder="kg × reps" value="${esc(v)}" onchange="setSet(${i},${j},this.value)">`).join('')}</div>
-<div class="row" style="margin-top:8px"><label class="check"><input type="checkbox" ${log.done[i]?'checked':''} onchange="setDone(${i},this.checked)"> Done</label><span class="tiny">RIR <input style="width:42px;padding:4px 5px;background:#09090b;border:1px solid #333;color:#fff;border-radius:6px" value="${esc(log.rir[i]||'')}" onchange="setRir(${i},this.value)"></span></div>
-<div class="alt"><b>HOME / ALTERNATIVE:</b> ${e[3].join(' • ')}</div></div>`;
-}
-function setLog(k,v){getLog()[k]=v;save()}
-function setSet(i,j,v){let l=getLog();l.sets[i]=l.sets[i]||['','','',''];l.sets[i][j]=v;save()}
-function setDone(i,v){getLog().done[i]=v;save()}
-function setRir(i,v){getLog().rir[i]=v;save()}
-let timerID=null,timerLeft=90;
-function startTimer(sec){clearInterval(timerID);timerLeft=sec;drawTimer();timerID=setInterval(()=>{timerLeft--;drawTimer();if(timerLeft<=0){clearInterval(timerID);navigator.vibrate?.([200,100,200]);toast('REST COMPLETE — NEXT SET')}} ,1000)}
-function stopTimer(){clearInterval(timerID);timerLeft=90;drawTimer()}
-function drawTimer(){let el=document.getElementById('timer');if(el)el.textContent=`${String(Math.floor(timerLeft/60)).padStart(2,'0')}:${String(timerLeft%60).padStart(2,'0')}`}
-function homePage(){
-let completed=days.filter(d=>S.logs[`w${S.week}_${d}`]?.completed).length;
-let active=(S.activities[`w${S.week}`]||[]).length;
-document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">FORGE PERSONAL TRAINING OS</div><h1>SHOW UP. GET STRONGER.</h1><p>Built around your strength + hypertrophy + athletic goal. Your job is to log honestly; the app keeps the history.</p><div class="quote">“Progress over perfection. Consistency over intensity you cannot sustain.”</div></div>
-<div class="grid3"><div class="stat"><div class="num">${completed}/7</div><div class="lab">sessions</div></div><div class="stat"><div class="num">${active}</div><div class="lab">activities</div></div><div class="stat"><div class="num">${S.week}/6</div><div class="lab">week</div></div></div>
-<div class="card"><div class="between"><h2>⚡ This week</h2><button class="btn primary" onclick="nav('workout')">Open workout</button></div><div class="progress"><i style="width:${completed/7*100}%"></i></div><p class="tiny" style="margin-bottom:0">${weekGuide[S.week]}</p></div>
-<div class="card"><h2>📆 Week ${S.week} schedule</h2>${days.map(d=>`<div class="item"><span><b>${d}</b><br><span class="tiny">${PROGRAM[d].title}</span></span><span>${S.logs[`w${S.week}_${d}`]?.completed?'✅':'○'}</span></div>`).join('')}</div>
-<div class="v3grid"><div class="stat"><div class="v3label">PRs tracked</div><div class="v3metric">${Object.keys(prs()).length}</div></div><div class="stat"><div class="v3label">Sets logged</div><div class="v3metric">${allLifts().length}</div></div><div class="stat"><div class="v3label">Readiness</div><div class="v3metric">${readinessScore()}</div></div><div class="stat"><div class="v3label">Activities</div><div class="v3metric">${(S.activities[`w${S.week}`]||[]).length}</div></div></div>
-<div class="v3panel pr"><div class="between"><b>🏆 LATEST PR SNAPSHOT</b><button class="btn smallbtn" onclick="nav('history')">VIEW HISTORY</button></div><div class="subtle">${topPRText()}</div></div>
-<div class="v3panel coach"><b>🧠 COACH ENGINE</b>${coachSignals().map(s=>`<div style="margin-top:7px"><span class="badge ${s[2]==='goodline'?'green':'red'}">${s[0]}</span> <span class="subtle">${s[1]}</span></div>`).join('')}</div>
-<div class="card"><h2>🎯 Coach rules</h2><div class="tiny">Main lifts: ramp up, then working sets. Compounds generally stop with 1–3 clean reps in reserve. Isolation work can approach RIR 1–2. Add load only when the prescribed reps and technique are earned. Week 6 is a recovery/review week.</div></div>`;
-}
-function activityPage(){
-let list=S.activities[`w${S.week}`]||[];
-document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">ACTIVITY / CARDIO / SPORT</div><h1>MOVE OUTSIDE THE GYM.</h1><p>If you swim, play a sport, hike, cycle, walk, or do another useful activity, log it. It does not have to match the planned session.</p></div>
-<div class="card"><h2>➕ Add activity</h2><div class="grid2"><div class="field"><label>Activity</label><select id="atype"><option>Swimming</option><option>Walking</option><option>Cycling</option><option>Running</option><option>Hiking</option><option>Football</option><option>Basketball</option><option>Yoga / Mobility</option><option>Other</option></select></div><div class="field"><label>Duration (min)</label><input id="adur" inputmode="numeric"></div><div class="field"><label>Distance (km, optional)</label><input id="adist" inputmode="decimal"></div><div class="field"><label>RPE 1–10</label><input id="arpe" inputmode="numeric"></div></div><div class="field" style="margin-top:9px"><label>Notes</label><input id="anote" placeholder="Easy swim, hard football, long walk..."></div><button class="btn primary" style="margin-top:10px" onclick="addActivity()">Add to week</button></div>
-<div class="card"><h2>📋 Week ${S.week} activities</h2>${list.length?list.map((a,i)=>`<div class="activity"><div class="between"><b>${esc(a.type)}</b><button class="btn danger" onclick="removeActivity(${i})">Delete</button></div><div class="tiny">${a.duration||0} min ${a.distance?`• ${a.distance} km`:''} ${a.rpe?`• RPE ${a.rpe}`:''}</div><div class="tiny">${esc(a.note||'')}</div></div>`).join(''):'<div class="empty">Nothing logged yet. Go do something you enjoy.</div>'}</div>`;
-}
-function addActivity(){let a={type:document.getElementById('atype').value,duration:document.getElementById('adur').value,distance:document.getElementById('adist').value,rpe:document.getElementById('arpe').value,note:document.getElementById('anote').value,date:new Date().toISOString()};S.activities[`w${S.week}`]=S.activities[`w${S.week}`]||[];S.activities[`w${S.week}`].push(a);save();render();toast('Activity added')}
-function removeActivity(i){S.activities[`w${S.week}`].splice(i,1);save();render()}
-function readinessScore(){let r=S.readiness[S.week];if(!r)return '—';let vals=[+r.sleep,+r.energy,+r.soreness,+r.stress].filter(x=>x>=1&&x<=5);if(vals.length<4)return '—';return Math.round(((r.sleep+r.energy+(6-r.soreness)+(6-r.stress))/20)*100)}
-function topPRText(){let p=prs(), entries=Object.entries(p).sort((a,b)=>b[1].weight-a[1].weight).slice(0,3);return entries.length?entries.map(([n,v])=>`${esc(n)}: ${v.weight}kg best`).join(' • '):'No PR data yet — earn your first one.'}
-function bodyPage(){
-let c=S.body.current||{};
-document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">BODY / DIMENSIONS / CHECKPOINT</div><h1>BUILD THE FRAME.</h1><p>Use the same measurement method and similar conditions each time. The goal is useful data, not daily noise.</p></div>
-<div class="card"><h2>📏 Current measurements</h2><div class="grid2">${[['weight','Weight (kg)'],['waist','Waist (cm)'],['chest','Chest (cm)'],['shoulders','Shoulders (cm)'],['arms','Upper arm (cm)'],['thigh','Thigh (cm)'],['calf','Calf (cm)'],['hips','Hips (cm)']].map(x=>`<div class="field"><label>${x[1]}</label><input inputmode="decimal" value="${esc(c[x[0]]||'')}" onchange="dim('${x[0]}',this.value)"></div>`).join('')}</div></div>
-<div class="v3panel"><div class="between"><h2 style="margin:0">🧠 READINESS</h2><span class="badge red">${readinessScore()}</span></div><div class="subtle" style="margin:5px 0 9px">1–5: sleep, energy. 1–5: soreness/stress (higher = worse).</div><div class="grid2">${[['sleep','Sleep quality'],['energy','Energy'],['soreness','Soreness'],['stress','Stress']].map(x=>`<div class="field"><label>${x[1]}</label><input inputmode="numeric" min="1" max="5" value="${esc(S.readiness[S.week]?.[x[0]]||'')}" onchange="setReadiness('${x[0]}',this.value)"></div>`).join('')}</div></div>
-<div class="card"><h2>🎯 Targets</h2><div class="grid2"><div class="field"><label>Target weight</label><input value="${esc(S.profile.targetWeight)}" onchange="S.profile.targetWeight=this.value;save()"></div><div class="field"><label>6-week start</label><input value="${esc(S.profile.startDate)}" onchange="S.profile.startDate=this.value;save()"></div></div></div>
-<div class="card"><h2>📅 Weekly checkpoint</h2>${[1,2,3,4,5,6].map(w=>{let b=S.body.weeks[w]||{};return `<div class="item"><b>Week ${w}</b><span class="tiny">Weight ${esc(b.weight||'—')} • Waist ${esc(b.waist||'—')}</span><button class="btn secondary" onclick="editWeekBody(${w})">Edit</button></div>`}).join('')}</div>`;
-}
-function setReadiness(k,v){S.readiness[S.week]=S.readiness[S.week]||{};S.readiness[S.week][k]=Math.max(1,Math.min(5,+v||1));save();render()}
-function dim(k,v){S.body.current[k]=v;save()}
-function editWeekBody(w){let b=S.body.weeks[w]||{};let weight=prompt(`Week ${w} weight (kg)`,b.weight||'');if(weight===null)return;let waist=prompt(`Week ${w} waist (cm)`,b.waist||'');if(waist===null)return;S.body.weeks[w]={weight,waist};save();render()}
-function historyPage(){let p=prs(), lifts=allLifts();let rows=Object.entries(p).sort((a,b)=>b[1].weight-a[1].weight).map(([n,v])=>`<tr><td><b>${esc(n)}</b></td><td>${v.weight} kg</td><td>${v.reps}</td><td>${Math.round(v.volume)}</td></tr>`).join('');let weeks=[1,2,3,4,5,6].map(w=>{let c=days.filter(d=>S.logs[`w${w}_${d}`]?.completed).length;return `<div class="item"><b>Week ${w}</b><span class="tiny">${c}/7 sessions</span><span class="badge ${c>=4?'green':'red'}">${Math.round(c/7*100)}%</span></div>`}).join('');document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">HISTORY / PRs / VOLUME</div><h1>SEE THE WORK.</h1><p>Every logged set becomes training history. No guessing from memory.</p></div><div class="v3grid"><div class="stat"><div class="v3label">Logged sets</div><div class="v3metric">${lifts.length}</div></div><div class="stat"><div class="v3label">Exercises</div><div class="v3metric">${Object.keys(p).length}</div></div><div class="stat"><div class="v3label">Workouts</div><div class="v3metric">${days.filter(d=>S.logs[`w${S.week}_${d}`]?.completed).length}</div></div><div class="stat"><div class="v3label">Readiness</div><div class="v3metric">${readinessScore()}</div></div></div><div class="v3panel pr"><h2 style="margin:0 0 8px">🏆 PERSONAL RECORDS</h2><div style="overflow:auto"><table><tr><th>Exercise</th><th>Best weight</th><th>Best reps</th><th>Volume</th></tr>${rows||'<tr><td colspan="4" class="tiny">Log kg × reps to build PRs.</td></tr>'}</table></div></div><div class="card"><h2>📅 BLOCK HISTORY</h2>${weeks}</div><div class="card"><h2>🧹 WORKOUT CRUD</h2><p class="tiny">You can clear a whole day from Workout → CLEAR DAY, delete activities from Activity, edit body checkpoints, and restore any JSON backup.</p></div>`}
-function coachPage(){let sig=coachSignals();let w=S.week;let completed=days.filter(d=>S.logs[`w${w}_${d}`]?.completed).length;let act=(S.activities[`w${w}`]||[]).reduce((a,x)=>a+(+x.duration||0),0);let readiness=readinessScore();document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">FORGE COACH ENGINE</div><h1>UNLEASHED.</h1><p>Review the week, then decide what to carry forward. The app suggests; you stay in control.</p></div><div class="v3grid"><div class="stat"><div class="v3label">Sessions</div><div class="v3metric">${completed}/7</div></div><div class="stat"><div class="v3label">Activity min</div><div class="v3metric">${act}</div></div><div class="stat"><div class="v3label">Readiness</div><div class="v3metric">${readiness}</div></div><div class="stat"><div class="v3label">Week</div><div class="v3metric">${w}/6</div></div></div><div class="card"><h2>🧠 Coach review</h2>${sig.map(s=>`<div class="v3panel coach"><span class="badge ${s[2]==='goodline'?'green':'red'}">${s[0]}</span><div style="margin-top:6px">${s[1]}</div></div>`).join('')}</div><div class="weekreview"><b>WEEK ${w} REVIEW</b><p class="subtle">${weekGuide[w]}</p><div class="row"><button class="btn primary" onclick="nav('history')">Review history</button><button class="btn" onclick="exportJSON()">Export week JSON</button><button class="btn" onclick="nav('body')">Update readiness</button></div></div><div class="card"><h2>🏅 ACHIEVEMENTS</h2><div class="ach"><b>⚡</b><span>${completed>=5?'5+ sessions this week — consistency unlocked.':'Log 5 sessions in a week to unlock this.'}</span></div><hr><div class="ach"><b>🏆</b><span>${Object.keys(prs()).length>=3?'3+ exercises have recorded PR data.':'Record kg × reps on 3 exercises to build your first PR board.'}</span></div><hr><div class="ach"><b>❤️</b><span>${act>=120?'120+ activity minutes — cardio engine online.':'Reach 120 activity minutes across the week.'}</span></div></div>`}
-function dataPage(){
-document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">DATA / BACKUP / COACH REVIEW</div><h1>YOUR DATA. YOUR PROGRESS.</h1><p>Everything is stored locally in this browser. Export the JSON at the end of every week and keep the files as backups.</p></div>
-<div class="card"><h2>👤 Profile</h2><div class="grid2"><div class="field"><label>Name</label><input value="${esc(S.profile.name)}" onchange="S.profile.name=this.value;save()"></div><div class="field"><label>Start date</label><input value="${esc(S.profile.startDate)}" onchange="S.profile.startDate=this.value;save()"></div></div></div>
-<div class="card"><h2>💾 Export / Import</h2><div class="row"><button class="btn primary" onclick="exportJSON()">Export full JSON</button><button class="btn secondary" onclick="document.getElementById('importFile').click()">Import JSON</button><input id="importFile" class="hidden" type="file" accept=".json,application/json" onchange="importJSON(this.files[0])"></div><p class="tiny">When you send me the JSON, I can inspect your logged sets, activity, habits, measurements and notes and help plan the next week.</p></div>
-<div class="card"><h2>⚙️ App settings</h2><div class="field"><label>Default rest timer (seconds)</label><input inputmode="numeric" value="${S.settings.restTimer}" onchange="S.settings.restTimer=+this.value;save()"></div></div>
-<div class="card"><h2>🧹 Reset</h2><button class="btn danger" onclick="resetAll()">Delete local data</button></div>`;
-}
-function exportJSON(){let payload={app:'FORGE Personal Training OS',version:2,exportedAt:new Date().toISOString(),data:S};let blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-week-${S.week}-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON exported')}
-function importJSON(file){if(!file)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);S=x.data||x;if(!S.version)S.version=2;save();render();toast('Data imported')}catch(e){toast('Invalid JSON')}};r.readAsText(file)}
-function resetAll(){if(confirm('Delete all FORGE data from this browser?')){S=fresh();save();render();toast('Reset complete')}}
-function render(){document.getElementById('weekBadge').textContent=`WEEK ${S.week}`;let p=location.hash.replace('#','')||'home';document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.nav===p));if(p==='workout')workoutPage();else if(p==='history')historyPage();else if(p==='activity')activityPage();else if(p==='body')bodyPage();else if(p==='coach')coachPage();else if(p==='data')dataPage();else homePage()}
+function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function toast(x){let t=document.getElementById('toast');t.textContent=x;t.style.display='block';clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.style.display='none',1500)}
+function nav(x){location.hash=x;render()}
+document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>nav(b.dataset.n));addEventListener('hashchange',render);
+function log(){let k=`w${S.week}_${S.day}`;return S.logs[k]??(S.logs[k]={sets:{},rir:{},done:{},notes:''})}
+function setDay(d){S.day=d;save();render()} function setWeek(w){S.week=+w;save();render()}
+function dayBar(){return `<div class="days">${DAYS.map(d=>`<button class="day ${S.day===d?'active':''}" onclick="setDay('${d}')">${d.slice(0,3)}</button>`).join('')}</div>`}
+function weekSel(){return `<select onchange="setWeek(this.value)">${[1,2,3,4,5,6].map(w=>`<option ${w===S.week?'selected':''}>${w}</option>`).join('')}</select>`}
+function header(){let p=PROGRAM[S.day];return `<div class="hero"><div class="between"><div><div class="kicker">6-WEEK BLOCK • THU 24 SEP → WED 4 NOV</div><h1>${p.title}</h1><div class="muted">${p.focus}</div></div>${weekSel()}</div><div class="quote">“${p.q}”</div><div style="margin-top:10px"><div class="between tiny"><span>BLOCK PROGRESS</span><span>W${S.week}/6</span></div><div class="progress"><i style="width:${S.week/6*100}%"></i></div></div></div>${dayBar()}`}
+function parse(v){let m=String(v||'').match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)/i);return m?{kg:+m[1],reps:+m[2]}:null}
+function lifts(){let a=[];Object.entries(S.logs).forEach(([k,l])=>{let d=k.split('_').slice(1).join('_');Object.entries(l.sets||{}).forEach(([i,vs])=>(vs||[]).forEach(v=>{let p=parse(v);if(p&&PROGRAM[d]?.e[i])a.push({exercise:PROGRAM[d].e[i][0],kg:p.kg,reps:p.reps,volume:p.kg*p.reps,rir:+(l.rir?.[i]||99),key:k})}))});return a}
+function prMap(){let m={};lifts().forEach(x=>{m[x.exercise]??={weight:0,reps:0,volume:0};m[x.exercise].weight=Math.max(m[x.exercise].weight,x.kg);m[x.exercise].reps=Math.max(m[x.exercise].reps,x.reps);m[x.exercise].volume+=x.volume});return m}
+function readiness(){let r=S.readiness[S.week];if(!r)return '—';return Math.round(((+r.sleep+(+r.energy)+(6-+r.soreness)+(6-+r.stress))/20)*100)}
+function coach(){let a=lifts(),low=a.filter(x=>x.rir<=1&&x.rir!==99).length,high=a.filter(x=>x.rir>=3&&x.rir!==99).length;if(!a.length)return ['START','Log kg × reps and RIR before changing anything.','red'];if(low>5)return ['FATIGUE','Several sets are at RIR 0–1. Keep compounds away from failure and protect recovery.','red'];if(high>5)return ['PROGRESS','Several sets are at RIR 3+. If reps and technique were clean, a small load increase next exposure is reasonable.','green'];return ['BALANCED','Effort is in a productive range. Repeat or add a small load when the prescribed reps are earned.','red']}
+function exercise(e,i,l){let vs=l.sets[i]||['','','',''];let main=e[2].includes('MAIN');return `<div class="exercise ${main?'main':''}"><div class="between"><div><div class="exname">${e[0]}</div><div class="meta">${e[1]} • ${e[2]}</div></div><span class="badge">${main?'MAIN':'WORK'}</span></div><div class="sets">${vs.map((v,j)=>`<input placeholder="kg × reps" value="${esc(v)}" onchange="setSet(${i},${j},this.value)">`).join('')}</div><div class="row" style="margin-top:7px"><label class="check"><input type="checkbox" ${l.done[i]?'checked':''} onchange="setDone(${i},this.checked)"> Done</label><label class="tiny">RIR <input style="width:40px;padding:4px;background:#09090c;border:1px solid #333;color:#fff;border-radius:6px" value="${esc(l.rir[i]||'')}" onchange="setRir(${i},this.value)"></label></div><div class="alt"><b>HOME / ALTERNATIVE:</b> ${e[3].join(' • ')}</div></div>`}
+function setSet(i,j,v){let l=log();l.sets[i]??=['','','',''];l.sets[i][j]=v;save()}function setDone(i,v){log().done[i]=v;save()}function setRir(i,v){log().rir[i]=v;save()}
+function workout(){let p=PROGRAM[S.day],l=log(),c=coach(),body='';if(p.recovery){body=`<div class="card"><h2>❤️ Recovery / Zone 2</h2><div class="panel">30–60 min easy Zone 2 + 10–15 min mobility. Swimming, walking, cycling, running or another sport all count. Keep it conversational / RPE 3–4.</div><div class="grid2"><div class="field"><label>Duration (min)</label><input value="${esc(l.duration||'')}" onchange="log().duration=this.value;save()"></div><div class="field"><label>RPE</label><input value="${esc(l.rpe||'')}" onchange="log().rpe=this.value;save()"></div></div><div class="row" style="margin-top:8px">${['Zone 2','Swimming','Walking','Cycling','Sport','Mobility'].map(x=>`<button class="btn ${l.activity===x?'primary':''}" onclick="log().activity='${x}';save();render()">${x}</button>`).join('')}</div></div>`}else{body=`<div class="card"><h2>🔥 Warm-up + ramp</h2><div class="tiny">3–5 min easy cardio + dynamic mobility. Main lift: light × 8–10 → ~50% × 5 → ~65% × 3 → ~75–80% × 1–2 → working sets. Later compounds: 1–2 ramp sets. Isolation: normally none.</div></div>${p.e.map((e,i)=>exercise(e,i,l)).join('')}`};document.getElementById('app').innerHTML=header()+`<div class="panel coach"><b>🧠 ${c[0]}</b><div class="tiny">${c[1]}</div></div>${body}<div class="card"><h2>📝 Session</h2><textarea style="width:100%;background:#09090c;color:#fff;border:1px solid #333;border-radius:9px;padding:9px" placeholder="Notes..." onchange="log().notes=this.value;save()">${esc(l.notes||'')}</textarea><div class="row" style="margin-top:8px"><label class="check"><input type="checkbox" ${l.completed?'checked':''} onchange="log().completed=this.checked;save();render()"> Session completed</label><button class="btn danger" onclick="deleteDay()">Clear day</button></div></div>`}
+let timer=null,left=90;function timerStart(s){clearInterval(timer);left=s;timer=setInterval(()=>{left--;drawTimer();if(left<=0){clearInterval(timer);navigator.vibrate?.([180,80,180]);toast('REST COMPLETE') }},1000);drawTimer()}function timerStop(){clearInterval(timer);left=90;drawTimer()}function drawTimer(){let e=document.getElementById('timer');if(e)e.textContent=`${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`}
+function deleteDay(){if(confirm('Clear this day?')){delete S.logs[`w${S.week}_${S.day}`];save();render()}}
+function home(){let done=DAYS.filter(d=>S.logs[`w${S.week}_${d}`]?.completed).length,p=prMap(),act=(S.activities[S.week]||[]).length;document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">FORGE PERSONAL TRAINING OS</div><h1>SHOW UP. GET STRONGER.</h1><div class="muted">Strong + muscular + athletic + relatively lean. Log honestly. Let the history drive the next decision.</div><div class="quote">“Progress over perfection. Consistency over intensity you cannot sustain.”</div></div><div class="grid3"><div class="stat"><div class="num">${done}/7</div><div class="label">sessions</div></div><div class="stat"><div class="num">${Object.keys(p).length}</div><div class="label">PR exercises</div></div><div class="stat"><div class="num">${readiness()}</div><div class="label">readiness</div></div></div><div class="card"><div class="between"><h2>⚡ Week ${S.week}</h2><button class="btn primary" onclick="nav('workout')">Train</button></div><div class="progress"><i style="width:${done/7*100}%"></i></div><div class="tiny" style="margin-top:7px">${GUIDE[S.week]}</div></div><div class="card"><h2>📆 Schedule</h2>${DAYS.map(d=>`<div class="between" style="padding:8px 0;border-bottom:1px solid #292930"><span><b>${d}</b><br><span class="tiny">${PROGRAM[d].title}</span></span><span>${S.logs[`w${S.week}_${d}`]?.completed?'✅':'○'}</span></div>`).join('')}</div><div class="panel pr"><div class="between"><b>🏆 PR SNAPSHOT</b><button class="btn" onclick="nav('history')">History</button></div><div class="tiny" style="margin-top:7px">${Object.entries(p).slice(0,3).map(([n,v])=>`${esc(n)}: ${v.weight}kg`).join(' • ')||'Log your first working sets.'}</div></div><div class="panel coach"><b>🧠 COACH</b><div class="tiny">${coach()[1]}</div></div>`}
+function history(){let p=prMap(),a=lifts();let rows=Object.entries(p).map(([n,v])=>`<tr><td>${esc(n)}</td><td>${v.weight}kg</td><td>${v.reps}</td><td>${Math.round(v.volume)}</td></tr>`).join('');let bars=DAYS.map(d=>Object.keys(S.logs[`w${S.week}_${d}`]?.sets||{}).length).map(n=>`<i style="height:${Math.min(100,Math.max(4,n*12))}%"></i>`).join('');document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">HISTORY / PERFORMANCE</div><h1>SEE THE WORK.</h1><div class="muted">Every kg × reps entry becomes history. PRs are weight, rep and accumulated volume signals.</div></div><div class="grid3"><div class="stat"><div class="num">${a.length}</div><div class="label">logged sets</div></div><div class="stat"><div class="num">${Object.keys(p).length}</div><div class="label">exercises</div></div><div class="stat"><div class="num">${readiness()}</div><div class="label">readiness</div></div></div><div class="card"><h2>📊 Set density — W${S.week}</h2><div class="spark">${bars||'<i style="height:3%"></i>'}</div></div><div class="panel pr"><h2>🏆 PERSONAL RECORD BOARD</h2><div style="overflow:auto"><table><tr><th>Exercise</th><th>Best kg</th><th>Best reps</th><th>Volume</th></tr>${rows||'<tr><td colspan="4">No data yet.</td></tr>'}</table></div></div>`}
+function activity(){let a=S.activities[S.week]||[];document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">CARDIO / SPORT / MOVEMENT</div><h1>MOVE OUTSIDE THE GYM.</h1><div class="muted">Swimming, walking, cycling, running, hiking and sports count. Sunday can be an actual activity instead of a “missed workout.”</div></div><div class="card"><h2>➕ Log activity</h2><div class="grid2"><div class="field"><label>Type</label><select id="at"><option>Swimming</option><option>Walking</option><option>Cycling</option><option>Running</option><option>Hiking</option><option>Football</option><option>Basketball</option><option>Yoga / Mobility</option><option>Other</option></select></div><div class="field"><label>Minutes</label><input id="amin"></div><div class="field"><label>Distance km</label><input id="akm"></div><div class="field"><label>RPE 1–10</label><input id="arpe"></div></div><input id="anote" style="width:100%;margin-top:8px;padding:9px;background:#09090c;color:#fff;border:1px solid #333;border-radius:9px" placeholder="Notes"><button class="btn primary" style="margin-top:8px" onclick="addAct()">Add activity</button></div><div class="card"><h2>📋 Week ${S.week}</h2>${a.map((x,i)=>`<div class="panel"><div class="between"><b>${esc(x.type)}</b><button class="btn danger" onclick="delAct(${i})">Delete</button></div><div class="tiny">${x.min||0} min ${x.km?'• '+x.km+' km':''} ${x.rpe?'• RPE '+x.rpe:''}</div><div class="tiny">${esc(x.note||'')}</div></div>`).join('')||'<div class="tiny">Nothing logged yet.</div>'}</div>`}
+function addAct(){S.activities[S.week]??=[];S.activities[S.week].push({type:at.value,min:amin.value,km:akm.value,rpe:arpe.value,note:anote.value});save();render()}function delAct(i){S.activities[S.week].splice(i,1);save();render()}
+function body(){let c=S.body.current||{},r=S.readiness[S.week]||{};document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">BODY / CHECKPOINT / READINESS</div><h1>BUILD THE FRAME.</h1><div class="muted">Use consistent conditions for measurements. Track the trend, not day-to-day noise.</div></div><div class="card"><h2>📏 Current</h2><div class="grid2">${[['weight','Weight kg'],['waist','Waist cm'],['chest','Chest cm'],['shoulders','Shoulders cm'],['arms','Upper arm cm'],['thigh','Thigh cm'],['calf','Calf cm'],['hips','Hips cm']].map(([k,n])=>`<div class="field"><label>${n}</label><input value="${esc(c[k]||'')}" onchange="S.body.current['${k}']=this.value;save()"></div>`).join('')}</div></div><div class="panel"><div class="between"><h2>🧠 READINESS</h2><span class="badge red">${readiness()}</span></div><div class="tiny">Sleep + energy: higher is better. Soreness + stress: higher is worse. Use 1–5.</div><div class="grid2" style="margin-top:8px">${[['sleep','Sleep'],['energy','Energy'],['soreness','Soreness'],['stress','Stress']].map(([k,n])=>`<div class="field"><label>${n}</label><input value="${esc(r[k]||'')}" onchange="S.readiness[S.week]??={};S.readiness[S.week]['${k}']=Math.max(1,Math.min(5,+this.value||1));save();render()"></div>`).join('')}</div></div><div class="card"><h2>🎯 Target</h2><div class="grid2"><div class="field"><label>Target weight</label><input value="${esc(S.profile.targetWeight)}" onchange="S.profile.targetWeight=this.value;save()"></div><div class="field"><label>Start date</label><input value="${esc(S.profile.startDate)}" onchange="S.profile.startDate=this.value;save()"></div></div></div><div class="card"><h2>📅 Weekly checkpoint</h2>${[1,2,3,4,5,6].map(w=>{let x=S.body.weeks[w]||{};return `<div class="between" style="padding:8px 0;border-bottom:1px solid #292930"><b>Week ${w}</b><span class="tiny">Weight ${x.weight||'—'} • Waist ${x.waist||'—'}</span><button class="btn" onclick="editBody(${w})">Edit</button></div>`}).join('')}</div>`}
+function editBody(w){let b=S.body.weeks[w]||{};let x=prompt('Weight kg',b.weight||'');if(x===null)return;let y=prompt('Waist cm',b.waist||'');if(y===null)return;S.body.weeks[w]={weight:x,waist:y};save();render()}
+function coachPage(){let c=coach(),done=DAYS.filter(d=>S.logs[`w${S.week}_${d}`]?.completed).length,mins=(S.activities[S.week]||[]).reduce((a,x)=>a+(+x.min||0),0);document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">FORGE COACH ENGINE</div><h1>UNLEASHED.</h1><div class="muted">The app suggests from your logs; you decide what to do.</div></div><div class="grid4"><div class="stat"><div class="num">${done}/7</div><div class="label">sessions</div></div><div class="stat"><div class="num">${mins}</div><div class="label">activity min</div></div><div class="stat"><div class="num">${readiness()}</div><div class="label">readiness</div></div><div class="stat"><div class="num">${S.week}/6</div><div class="label">week</div></div></div><div class="panel coach"><span class="badge ${c[2]}">${c[0]}</span><p>${c[1]}</p></div><div class="card"><h2>📌 Week guidance</h2><div class="tiny">${GUIDE[S.week]}</div></div><div class="card"><h2>🏅 Milestones</h2><div class="tiny">${done>=5?'⚡ 5+ sessions this week recorded.':'○ 5 sessions in a week — consistency milestone.'}</div><hr><div class="tiny">${Object.keys(prMap()).length>=3?'🏆 PR data exists across 3+ exercises.':'○ Log 3 exercises with kg × reps to build the PR board.'}</div><hr><div class="tiny">${mins>=120?'❤️ 120+ activity minutes recorded.':'○ 120 activity minutes across a week.'}</div></div>`}
+function data(){document.getElementById('app').innerHTML=`<div class="hero"><div class="kicker">DATA / BACKUP</div><h1>YOUR DATA. YOUR PROGRESS.</h1><div class="muted">Local-first. Export a JSON backup at the end of every week and send it back here for review.</div></div><div class="card"><h2>👤 Profile</h2><div class="grid2"><div class="field"><label>Name</label><input value="${esc(S.profile.name)}" onchange="S.profile.name=this.value;save()"></div><div class="field"><label>Start date</label><input value="${esc(S.profile.startDate)}" onchange="S.profile.startDate=this.value;save()"></div></div></div><div class="card"><h2>💾 Backup</h2><div class="row"><button class="btn primary" onclick="exportJSON()">Export JSON</button><button class="btn" onclick="document.getElementById('imp').click()">Import JSON</button><input id="imp" class="hidden" type="file" accept=".json" onchange="importJSON(this.files[0])"></div></div><div class="card"><h2>⚙️ Rest timer</h2><input value="${S.settings.rest}" onchange="S.settings.rest=+this.value||90;save()"></div><div class="card"><h2>🧹 Reset</h2><button class="btn danger" onclick="if(confirm('Delete all local FORGE data?')){S=fresh();save();render()}">Delete local data</button></div>`}
+function exportJSON(){let blob=new Blob([JSON.stringify({app:'FORGE V3 UNLEASHED',exportedAt:new Date().toISOString(),data:S},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-v3-week-${S.week}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON exported')}
+function importJSON(f){if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);S=x.data||x;save();render();toast('Imported')}catch(e){toast('Invalid JSON')}};r.readAsText(f)}
+function render(){document.getElementById('weekBadge').textContent='W'+S.week;let p=location.hash.slice(1)||'home';document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.n===p));({home,workout,history,activity,body,coach:coachPage,data}[p]||home)()}
 render();
-if('serviceWorker' in navigator && location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+if(location.protocol!=='file:'&&'serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
-</body>
-</html>
+</body></html>
