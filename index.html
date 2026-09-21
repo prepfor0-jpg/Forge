@@ -34,7 +34,7 @@ button{cursor:pointer}
 .topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{font-weight:1000;font-size:24px;letter-spacing:2px;line-height:1}
 .brand em{font-style:normal;color:var(--red)}
-.sub{font-size:8px;color:#74757d;letter-spacing:1.7px;margin-top:5px;font-weight:800}
+.brandmark{width:31px;height:31px;display:inline-grid;place-items:center;border:1px solid #6d1828;border-radius:9px;background:linear-gradient(145deg,#3a0b14,#0d0d10);box-shadow:0 0 24px rgba(255,23,63,.16);vertical-align:middle;margin-right:7px}.brandmark svg{width:20px;height:20px}.sub{font-size:8px;color:#74757d;letter-spacing:1.7px;margin-top:5px;font-weight:800}
 .weekpill{padding:7px 10px;border-radius:999px;background:rgba(255,23,63,.14);border:1px solid rgba(255,23,63,.45);color:#ff8da2;font-size:9px;font-weight:1000;letter-spacing:1px}
 .content{padding:14px}
 .eyebrow{font-size:9px;letter-spacing:2px;font-weight:1000;color:#ff738a;text-transform:uppercase}
@@ -136,7 +136,7 @@ button{cursor:pointer}
 <div class="app">
 <header class="top">
   <div class="topline">
-    <div><div class="brand">FORGE <em>///</em></div><div class="sub">PERSONAL TRAINING COMMAND CENTER</div></div>
+    <div><div class="brand"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M13.8 2 5.2 13h5.1L9.9 22 18.8 10.2h-5.2L13.8 2Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M3 6h5M3 18h5" stroke="currentColor" stroke-width="1.5" opacity=".65"/></svg></span>FORGE <em>///</em></div><div class="sub">PERSONAL TRAINING COMMAND CENTER</div></div>
     <div class="weekpill" id="weekBadge">W1</div>
   </div>
 </header>
@@ -174,7 +174,7 @@ Wednesday:{title:'RECOVERY',focus:'Mobility + easy movement',q:'Recovery is trai
 Sunday:{title:'ZONE 2 + RECOVERY',focus:'Cardiovascular fitness + recovery',q:'Move today. Come back stronger.',recovery:true}
 };
 const GUIDE={1:'Build the base • RIR 2–3',2:'Build • add a rep or small load when earned',3:'Progress • compounds RIR ~2, isolation RIR 1–2',4:'Push • selected isolation intensity only',5:'Consolidate • quality over failure',6:'Deload + review • reduce load 10–20% OR sets 30–40%, RIR 3–4'};
-function fresh(){return {version:4,week:1,day:'Thursday',profile:{name:'',startDate:START,targetWeight:'64–65 kg'},logs:{},activities:{},body:{current:{},weeks:{}},readiness:{},settings:{rest:90}}}
+function fresh(){return {version:5,week:1,day:'Thursday',profile:{name:'',startDate:START,targetWeight:'64–65 kg'},logs:{},activities:{},steps:{},body:{current:{},weeks:{},checkpoints:{}},readiness:{},supersets:{},settings:{rest:90,stepsGoal:8000}}}
 function timeline(){
  const start=new Date(START+'T00:00:00'), now=new Date();
  const diff=Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-start)/86400000);
@@ -198,104 +198,60 @@ function dayBar(){return `<div class="days">${DAYS.map(d=>`<button class="day ${
 function weekSel(){return `<select onchange="setWeek(this.value)">${[1,2,3,4,5,6].map(w=>`<option ${w===S.week?'selected':''}>${w}</option>`).join('')}</select>`}
 function header(){let p=PROGRAM[S.day];return `<div class="hero"><div class="between"><div><div class="kicker">6-WEEK BLOCK • THU 24 SEP → WED 4 NOV</div><h1>${p.title}</h1><div class="muted">${p.focus}</div></div>${weekSel()}</div><div class="quote">“${p.q}”</div><div style="margin-top:10px"><div class="between tiny"><span>BLOCK PROGRESS</span><span>W${S.week}/6</span></div><div class="progress"><i style="width:${S.week/6*100}%"></i></div></div></div>${dayBar()}`}
 function parse(v){let m=String(v||'').match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+)/i);return m?{kg:+m[1],reps:+m[2]}:null}
-function lifts(){let a=[];Object.entries(S.logs).forEach(([k,l])=>{let d=k.split('_').slice(1).join('_');Object.entries(l.sets||{}).forEach(([i,vs])=>(vs||[]).forEach(v=>{let p=parse(v);if(p&&PROGRAM[d]?.e[i])a.push({exercise:PROGRAM[d].e[i][0],kg:p.kg,reps:p.reps,volume:p.kg*p.reps,rir:+(l.rir?.[i]||99),key:k})}))});return a}
+function lifts(){
+ let a=[];
+ Object.entries(S.logs).forEach(([key,l])=>{
+  let d=key.split('_').slice(1).join('_'), exs=PROGRAM[d]?.e||[];
+  Object.entries(l.sets||{}).forEach(([name,vs])=>{
+   (vs||[]).forEach(v=>{
+    if(v && typeof v==='object' && +v.kg>0 && +v.reps>0)
+      a.push({exercise:name,kg:+v.kg,reps:+v.reps,volume:+v.kg*+v.reps,rir:v.rir===''||v.rir==null?99:+v.rir,key});
+    else {
+      let p=parse(v),idx=exs.findIndex(e=>e[0]===name);
+      if(p&&idx>=0)a.push({exercise:exs[idx][0],kg:p.kg,reps:p.reps,volume:p.kg*p.reps,rir:+(l.rir?.[idx]??99),key})
+    }
+   })
+  });
+ });
+ return a;
+}
 function prMap(){let m={};lifts().forEach(x=>{m[x.exercise]??={weight:0,reps:0,volume:0};m[x.exercise].weight=Math.max(m[x.exercise].weight,x.kg);m[x.exercise].reps=Math.max(m[x.exercise].reps,x.reps);m[x.exercise].volume+=x.volume});return m}
 function readiness(){let r=S.readiness[S.week];if(!r)return '—';return Math.round(((+r.sleep+(+r.energy)+(6-+r.soreness)+(6-+r.stress))/20)*100)}
 function coach(){let a=lifts(),low=a.filter(x=>x.rir<=1&&x.rir!==99).length,high=a.filter(x=>x.rir>=3&&x.rir!==99).length;if(!a.length)return ['START','Log kg × reps and RIR before changing anything.','red'];if(low>5)return ['FATIGUE','Several sets are at RIR 0–1. Keep compounds away from failure and protect recovery.','red'];if(high>5)return ['PROGRESS','Several sets are at RIR 3+. If reps and technique were clean, a small load increase next exposure is reasonable.','green'];return ['BALANCED','Effort is in a productive range. Repeat or add a small load when the prescribed reps are earned.','red']}
 function exercise(e,i,l){let vs=l.sets[i]||['','','',''];let main=e[2].includes('MAIN');return `<div class="exercise ${main?'main':''}"><div class="between"><div><div class="exname">${e[0]}</div><div class="meta">${e[1]} • ${e[2]}</div></div><span class="badge">${main?'MAIN':'WORK'}</span></div><div class="sets">${vs.map((v,j)=>`<input placeholder="kg × reps" value="${esc(v)}" onchange="setSet(${i},${j},this.value)">`).join('')}</div><div class="row" style="margin-top:7px"><label class="check"><input type="checkbox" ${l.done[i]?'checked':''} onchange="setDone(${i},this.checked)"> Done</label><label class="tiny">RIR <input style="width:40px;padding:4px;background:#09090c;border:1px solid #333;color:#fff;border-radius:6px" value="${esc(l.rir[i]||'')}" onchange="setRir(${i},this.value)"></label></div><div class="alt"><b>HOME / ALTERNATIVE:</b> ${e[3].join(' • ')}</div></div>`}
 function setSet(i,j,v){let l=log();l.sets[i]??=['','','',''];l.sets[i][j]=v;save()}function setDone(i,v){log().done[i]=v;save()}function setRir(i,v){log().rir[i]=v;save()}
-function workout(){let p=PROGRAM[S.day],l=log(),c=coach(),body='';if(p.recovery){body=`<div class="card"><h2>❤️ Recovery / Zone 2</h2><div class="panel">30–60 min easy Zone 2 + 10–15 min mobility. Swimming, walking, cycling, running or another sport all count. Keep it conversational / RPE 3–4.</div><div class="grid2"><div class="field"><label>Duration (min)</label><input value="${esc(l.duration||'')}" onchange="log().duration=this.value;save()"></div><div class="field"><label>RPE</label><input value="${esc(l.rpe||'')}" onchange="log().rpe=this.value;save()"></div></div><div class="row" style="margin-top:8px">${['Zone 2','Swimming','Walking','Cycling','Sport','Mobility'].map(x=>`<button class="btn ${l.activity===x?'primary':''}" onclick="log().activity='${x}';save();render()">${x}</button>`).join('')}</div></div>`}else{body=`<div class="card"><h2>🔥 Warm-up + ramp</h2><div class="tiny">3–5 min easy cardio + dynamic mobility. Main lift: light × 8–10 → ~50% × 5 → ~65% × 3 → ~75–80% × 1–2 → working sets. Later compounds: 1–2 ramp sets. Isolation: normally none.</div></div>${p.e.map((e,i)=>exercise(e,i,l)).join('')}`};document.getElementById('app').innerHTML=header()+`<div class="panel coach"><b>🧠 ${c[0]}</b><div class="tiny">${c[1]}</div></div>${body}<div class="card"><h2>📝 Session</h2><textarea style="width:100%;background:#09090c;color:#fff;border:1px solid #333;border-radius:9px;padding:9px" placeholder="Notes..." onchange="log().notes=this.value;save()">${esc(l.notes||'')}</textarea><div class="row" style="margin-top:8px"><label class="check"><input type="checkbox" ${l.completed?'checked':''} onchange="log().completed=this.checked;save();render()"> Session completed</label><button class="btn danger" onclick="deleteDay()">Clear day</button></div></div>`}
-let timer=null,left=90;function timerStart(s){clearInterval(timer);left=s;timer=setInterval(()=>{left--;drawTimer();if(left<=0){clearInterval(timer);navigator.vibrate?.([180,80,180]);toast('REST COMPLETE') }},1000);drawTimer()}function timerStop(){clearInterval(timer);left=90;drawTimer()}function drawTimer(){let e=document.getElementById('timer');if(e)e.textContent=`${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`}
-function deleteDay(){if(confirm('Clear this day?')){delete S.logs[`w${S.week}_${S.day}`];save();render()}}
-
-function todayKey(){return `w${S.week}_${S.day}`}
-function sessionDone(){return !!S.logs[todayKey()]?.completed}
-function weekDone(){return DAYS.filter(d=>S.logs[`w${S.week}_${d}`]?.completed).length}
-function dayDate(day){
- const t=timeline(); if(t.pre)return START;
- const base=new Date(START+'T00:00:00'); const idx=DAYS.indexOf(day);
- const mondayIdx=0; // schedule labels
- const weekStart=new Date(base.getTime() + ((S.week-1)*7)*86400000);
- const delta=(idx-((base.getDay()+6)%7)+7)%7;
- return new Date(weekStart.getTime()+delta*86400000).toISOString().slice(0,10);
+function suggestedLoad(name){
+ let p=prMap()[name];if(!p||!p.weight)return null;
+ return Math.max(0.5,Math.round(p.weight*1.025*2)/2);
 }
-function home(){
- const t=timeline(),done=weekDone(),p=prMap(),r=readiness();
- const next=t.pre?'PROGRAM OPENS THU 24 SEP':`${t.day.toUpperCase()} // ${PROGRAM[t.day]?.title||''}`;
- document.getElementById('app').innerHTML=`
- <section class="hero">
-   <div class="eyebrow">FORGE // COMMAND CENTER</div>
-   <h1>${t.pre?'SYSTEM READY.':'SHOW UP. GET STRONGER.'}</h1>
-   <p>${t.pre?'Your 6-week campaign starts Thursday, 24 September 2026. Until then, set up your profile and get ready.':'One screen for the work: today’s mission, performance, recovery and the next move.'}</p>
-   <div class="quote">“Log quickly → train hard → recover → review → adapt → repeat.”</div>
- </section>
- <div class="grid g4">
-   <div class="metric"><div class="num">${S.week}/6</div><div class="lbl">Campaign</div></div>
-   <div class="metric"><div class="num">${done}/7</div><div class="lbl">Week sessions</div></div>
-   <div class="metric"><div class="num">${Object.keys(p).length}</div><div class="lbl">PR signals</div></div>
-   <div class="metric"><div class="num">${r||'—'}</div><div class="lbl">Readiness</div></div>
- </div>
- <section class="section">
-   <div class="sectionhead"><h2>⚡ TODAY'S COMMAND</h2><span class="tiny">${next}</span></div>
-   <div class="command red">
-     <div class="eyebrow">${t.pre?'PRE-START':'MISSION'}</div>
-     <div class="big">${t.pre?'THURSDAY // LOWER STRENGTH':PROGRAM[S.day]?.title||'RECOVERY'}</div>
-     <div class="tiny" style="margin-top:5px">${t.pre?'Back Squat + Romanian Deadlift lead the first session.':PROGRAM[S.day]?.focus||''}</div>
-     <div class="row" style="margin-top:13px">
-       ${t.pre?'<button class="btn primary" onclick="nav(&quot;body&quot;)">SET UP PROFILE →</button>':
-       `<button class="btn primary" onclick="nav('workout')">${sessionDone()?'REVIEW SESSION':'START SESSION'} →</button>`}
-       <button class="btn ghost" onclick="nav('activity')">LOG ACTIVITY</button>
-     </div>
-   </div>
- </section>
- <section class="section">
-  <div class="sectionhead"><h2>CAMPAIGN // 6 WEEKS</h2><span class="tiny">${t.pre?'NOT STARTED':'WEEK '+S.week}</span></div>
-  <div class="campaign">${[1,2,3,4,5,6].map(w=>`<div class="camp ${w===S.week?'on':''} ${w<S.week?'done':''}"><b>W${w}</b><br>${['BASE','BUILD','PROGRESS','PUSH','CONSOLIDATE','DELOAD'][w-1]}</div>`).join('')}</div>
- </section>
- <section class="section">
-  <div class="sectionhead"><h2>THIS WEEK</h2><span class="tiny">${done}/7 sessions</span></div>
-  <div class="daygrid">${DAYS.map(d=>{let x=S.logs[`w${S.week}_${d}`];return `<div class="daycell ${d===S.day?'active':''} ${x?.completed?'done':''}"><strong>${d.slice(0,3).toUpperCase()}</strong><span>${PROGRAM[d].title}</span><span>${x?.completed?'✓ COMPLETE':d===S.day?'TODAY':'○'}</span></div>`}).join('')}</div>
- </section>
- <section class="section">
-  <div class="sectionhead"><h2>QUICK ACTIONS</h2></div>
-  <div class="quick">
-   <button onclick="nav('workout')"><b>⚡</b>START / SAVE SESSION</button>
-   <button onclick="nav('activity')"><b>◌</b>LOG SPORT / CARDIO</button>
-   <button onclick="nav(&quot;body&quot;)"><b>◈</b>READINESS / BODY</button>
-  </div>
- </section>
- <div class="grid g2">
-  <div class="command pr"><div class="eyebrow">PERFORMANCE</div><div class="big">${Object.keys(p).length} PR signals</div><div class="tiny" style="margin-top:5px">${Object.entries(p).slice(0,3).map(([n,v])=>`${esc(n)} ${v.weight}kg × ${v.reps}`).join(' • ')||'Your first entries will build the board.'}</div></div>
-  <div class="command coach"><div class="eyebrow">COACH ENGINE</div><div class="big">${coach()[0]}</div><div class="tiny" style="margin-top:5px">${coach()[1]}</div></div>
- </div>`;
+function rampFor(name){
+ let p=prMap()[name];if(!p||!p.weight)return ['Empty / very light × 8–10','~50% × 5','~65% × 3','~75–80% × 1–2'];
+ return [`${Math.max(.5,Math.round(p.weight*.4*2)/2)} kg × 8–10`,`~${Math.max(.5,Math.round(p.weight*.6*2)/2)} kg × 5`,`~${Math.max(.5,Math.round(p.weight*.75*2)/2)} kg × 3`,`~${Math.max(.5,Math.round(p.weight*.85*2)/2)} kg × 1–2`];
 }
+function isPaired(name){return Object.values(S.supersets||{}).find(x=>x.includes(name))}
+function createSuperset(a,b){if(!a||!b||a===b){toast('SELECT TWO DIFFERENT EXERCISES');return}S.supersets[`SS${Date.now()}`]=[a,b];save();render();toast('SUPERSET CREATED')}
+function removeSuperset(id){delete S.supersets[id];save();render();toast('SUPERSET REMOVED')}
 function workout(){
- const t=timeline(),d=t.pre?'Thursday':S.day,P=PROGRAM[d];
- if(P.recovery){
-  document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">RECOVERY COMMAND</div><h1>${P.title}</h1><p>${P.q}</p></section><div class="command"><div class="big">${P.focus}</div><div class="tiny" style="margin-top:7px">Log mobility, swimming, walking, cycling or another activity. Recovery days are part of the campaign.</div><button class="btn primary" style="margin-top:13px" onclick="nav('activity')">LOG ACTIVITY →</button></div>`;return;
- }
- const L=S.logs[`w${S.week}_${d}`]||{sets:{},completed:false};
- const exhtml=P.e.map((e,i)=>{
-   const n=e[0],target=e[1],sets=(target.match(/(\\d+)\\s*[×x]/i)||[,'1'])[1]*1;
-   let rows='';
-   for(let s=1;s<=sets;s++){
-    const z=L.sets?.[n]?.[s-1]||{};
-    rows+=`<div class="setrow"><div class="setno">${String(s).padStart(2,'0')}</div><input type="number" step="0.5" placeholder="kg" value="${z.kg??''}" onchange="setVal('${esc(n)}',${s-1},'kg',this.value)"><input type="number" placeholder="reps" value="${z.reps??''}" onchange="setVal('${esc(n)}',${s-1},'reps',this.value)"><input type="number" min="0" max="5" placeholder="RIR" value="${z.rir??''}" onchange="setVal('${esc(n)}',${s-1},'rir',this.value)"><button class="setdone ${z.done?'on':''}" onclick="toggleSet('${esc(n)}',${s-1})">${z.done?'✓':'○'}</button></div>`;
-   }
-   return `<div class="exercise ${i===0?'main':''}">
-    <div class="ex-top"><div><div class="eyebrow">${String(i+1).padStart(2,'0')} / ${P.e.length}</div><div class="exname">${esc(n)}</div><div class="exmeta">${esc(e[2])}</div></div><span class="weekpill">${target}</span></div>
-    <div class="target">TARGET <b>${target}</b></div>
-    <div class="sethead"><span>SET</span><span>KG</span><span>REPS</span><span>RIR</span><span>✓</span></div>${rows}
-    <div class="alt"><b>HOME / ALTERNATIVE:</b> ${e[3].map(esc).join(' • ')}</div>
-    <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="timerStart(${i===0?150:90})">REST ${i===0?'2:30':'1:30'}</button><button class="btn ghost" onclick="quickFill('${esc(n)}',${sets})">FILL LAST</button></div>
-   </div>`;
+ const t=timeline(),d=t.pre?'Thursday':S.day,P=PROGRAM[d],L=S.logs[`w${S.week}_${d}`]||{sets:{},completed:false};
+ if(P.recovery){document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">RECOVERY COMMAND</div><h1>${P.title}</h1><p>${P.q}</p></section><div class="command"><div class="big">${P.focus}</div><div class="tiny" style="margin-top:7px">Log mobility, swimming, walking, cycling or another activity. Recovery days are part of the campaign.</div><button class="btn primary" style="margin-top:13px" onclick="nav('activity')">LOG ACTIVITY →</button></div>`;return}
+ const exs=P.e,options=exs.map(e=>`<option>${esc(e[0])}</option>`).join('');
+ const supers=Object.entries(S.supersets||{}).filter(([_,v])=>v.every(n=>exs.some(e=>e[0]===n))).map(([id,v])=>`<div class="between" style="padding:7px 0;border-bottom:1px solid var(--line)"><span><b>${esc(v[0])}</b> <span class="tiny">+</span> <b>${esc(v[1])}</b></span><button class="btn danger" onclick="removeSuperset('${id}')">REMOVE</button></div>`).join('');
+ const exhtml=exs.map((e,i)=>{
+  const n=e[0],target=e[1],sets=(target.match(/(\d+)\s*[×x]/i)||[,'1'])[1]*1,zs=L.sets?.[n]||[],main=e[2].includes('MAIN'),sug=suggestedLoad(n),pair=isPaired(n);
+  let rows='';
+  for(let j=0;j<sets;j++){const z=zs[j]||{};rows+=`<div class="setrow"><div class="setno">${String(j+1).padStart(2,'0')}</div><input type="number" step="0.5" placeholder="${sug||'kg'}" value="${z.kg??''}" onchange="setVal('${esc(n)}',${j},'kg',this.value)"><input type="number" placeholder="reps" value="${z.reps??''}" onchange="setVal('${esc(n)}',${j},'reps',this.value)"><input type="number" min="0" max="5" placeholder="RIR" value="${z.rir??''}" onchange="setVal('${esc(n)}',${j},'rir',this.value)"><button class="setdone ${z.done?'on':''}" onclick="toggleSet('${esc(n)}',${j})">${z.done?'✓':'○'}</button></div>`}
+  return `<div class="exercise ${main?'main':''}"><div class="ex-top"><div><div class="eyebrow">${String(i+1).padStart(2,'0')} / ${exs.length}</div><div class="exname">${esc(n)} ${pair?'<span class="weekpill">SS</span>':''}</div><div class="exmeta">${esc(e[2])}</div></div><span class="weekpill">${target}</span></div>
+  ${main?`<div class="command" style="margin-top:9px;padding:10px"><div class="eyebrow">RAMP-UP SUGGESTION</div><div class="tiny">${rampFor(n).join(' → ')}</div></div>`:''}
+  <div class="target">WORKING SETS <b>${target}</b> ${sug?`<span class="tiny">• suggested next load ${sug} kg</span>`:''}</div>
+  <div class="sethead"><span>SET</span><span>KG</span><span>REPS</span><span>RIR</span><span>✓</span></div>${rows}
+  <div class="alt"><b>HOME / ALTERNATIVE:</b> ${e[3].map(esc).join(' • ')}</div>
+  <div class="row" style="margin-top:8px"><button class="btn ghost" onclick="timerStart(${main?150:90})">REST ${main?'2:30':'1:30'}</button><button class="btn ghost" onclick="quickFill('${esc(n)}',${sets})">FILL LAST</button></div></div>`;
  }).join('');
- document.getElementById('app').innerHTML=`
- <section class="hero"><div class="eyebrow">W${S.week} // ${d.toUpperCase()}</div><h1>${P.title}</h1><p>${P.focus}. ${P.q}</p></section>
- <div class="grid g3"><div class="metric"><div class="num">${Object.keys(L.sets||{}).length}/${P.e.length}</div><div class="lbl">Exercises logged</div></div><div class="metric"><div class="num">${Object.values(L.sets||{}).flat().filter(x=>x?.done).length}</div><div class="lbl">Sets complete</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div></div>
- <div class="sessionbar"><div class="between"><div><div class="eyebrow">SESSION CONTROL</div><div class="tiny">Mark complete only when you are done.</div></div><button class="btn primary" onclick="completeDay()">COMPLETE SESSION</button></div><div class="timerbox" id="timer">01:30</div><div class="row"><button class="btn" onclick="timerStart(S.settings.rest)">START REST</button><button class="btn ghost" onclick="timerStop()">RESET</button></div></div>
- ${exhtml}
- <div class="command" style="margin-top:14px"><div class="eyebrow">SAVE THE DAY</div><div class="big">${L.completed?'SESSION LOCKED ✓':'Finish your working sets, then complete the session.'}</div><div class="tiny" style="margin-top:5px">Your logs drive PRs, progression signals and weekly review.</div></div>`;
+ document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">W${S.week} // ${d.toUpperCase()}</div><h1>${P.title}</h1><p>${P.focus}. ${P.q}</p></section>
+ <div class="grid g3"><div class="metric"><div class="num">${Object.keys(L.sets||{}).length}/${exs.length}</div><div class="lbl">Exercises logged</div></div><div class="metric"><div class="num">${Object.values(L.sets||{}).flat().filter(x=>x?.done).length}</div><div class="lbl">Sets complete</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div></div>
+ <div class="sessionbar"><div class="between"><div><div class="eyebrow">SESSION CONTROL</div><div class="tiny">Ramp → working sets → RIR → complete.</div></div><button class="btn primary" onclick="completeDay()">COMPLETE SESSION</button></div><div class="timerbox" id="timer">01:30</div><div class="row"><button class="btn" onclick="timerStart(S.settings.rest)">START REST</button><button class="btn ghost" onclick="timerStop()">RESET</button></div></div>
+ <div class="card"><div class="sectionhead"><h2>SUPERSET BUILDER</h2><span class="tiny">pair two exercises</span></div><div class="grid g2"><div class="field"><label>Exercise A</label><select id="ssa">${options}</select></div><div class="field"><label>Exercise B</label><select id="ssb">${options}</select></div></div><button class="btn primary" style="margin-top:9px" onclick="createSuperset(document.getElementById('ssa').value,document.getElementById('ssb').value)">CREATE SUPERSET →</button>${supers?`<div style="margin-top:9px">${supers}</div>`:''}</div>
+ ${exhtml}<div class="command" style="margin-top:14px"><div class="eyebrow">SAVE THE DAY</div><div class="big">${L.completed?'SESSION LOCKED ✓':'Finish your working sets, then complete the session.'}</div><div class="tiny" style="margin-top:5px">Your logs drive PRs, progression signals and weekly review.</div></div>`;
 }
 function setVal(n,i,k,v){S.logs[`w${S.week}_${S.day}`]??={sets:{},completed:false};S.logs[`w${S.week}_${S.day}`].sets[n]??=[];S.logs[`w${S.week}_${S.day}`].sets[n][i]??={};S.logs[`w${S.week}_${S.day}`].sets[n][i][k]=v===''?'':(+v);save()}
 function toggleSet(n,i){S.logs[`w${S.week}_${S.day}`]??={sets:{},completed:false};S.logs[`w${S.week}_${S.day}`].sets[n]??=[];S.logs[`w${S.week}_${S.day}`].sets[n][i]??={};S.logs[`w${S.week}_${S.day}`].sets[n][i].done=!S.logs[`w${S.week}_${S.day}`].sets[n][i].done;save();workout()}
@@ -309,23 +265,40 @@ function history(){
  <div class="section"><div class="sectionhead"><h2>SET DENSITY // W${S.week}</h2></div><div class="command"><div class="spark">${bars||'<i style="height:4%"></i>'}</div><div class="tiny">Higher bars = more logged working sets. Use the trend with recovery and performance, not alone.</div></div></div>
  <div class="section"><div class="sectionhead"><h2>PR BOARD</h2><span class="tiny">weight • reps • volume</span></div><div class="card tablewrap"><table><tr><th>Exercise</th><th>Best KG</th><th>Best reps</th><th>Volume</th></tr>${rows||'<tr><td colspan="4">Log your first working sets.</td></tr>'}</table></div></div>`;
 }
+function dateKey(){return new Date().toISOString().slice(0,10)}
+function stepStats(){
+ let vals=Object.values(S.steps||{}).map(Number).filter(Boolean),today=+(S.steps[dateKey()]||0);
+ return {today,avg:vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0};
+}
 function activity(){
- let a=S.activities[S.week]||[];
- document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">ACTIVITY // CARDIO ENGINE</div><h1>MOVE LIKE AN ATHLETE.</h1><p>Swimming, walking, running, cycling and sport all count. Sunday activity can satisfy the recovery/cardio intent without being treated as a missed workout.</p></section>
+ let a=S.activities[S.week]||[],st=stepStats(),goal=S.settings.stepsGoal||8000;
+ document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">ACTIVITY // CARDIO ENGINE</div><h1>MOVE LIKE AN ATHLETE.</h1><p>Steps, sport and conditioning live together. Recovery activity counts as training data.</p></section>
+ <div class="grid g3"><div class="metric"><div class="num">${st.today.toLocaleString()}</div><div class="lbl">Today's steps</div></div><div class="metric"><div class="num">${st.avg?st.avg.toLocaleString():'—'}</div><div class="lbl">Logged step avg</div></div><div class="metric"><div class="num">${goal.toLocaleString()}</div><div class="lbl">Daily target</div></div></div>
+ <div class="card"><div class="sectionhead"><h2>DAILY STEPS</h2><span class="tiny">${Math.min(100,Math.round(st.today/goal*100))}% of target</span></div><div class="progress"><i style="width:${Math.min(100,Math.round(st.today/goal*100))}%"></i></div>
+ <div class="grid g2" style="margin-top:10px"><div class="field"><label>Today's steps</label><input id="stepInput" type="number" min="0" value="${st.today||''}" placeholder="e.g. 8000"></div><div class="field"><label>Daily target</label><input id="stepGoal" type="number" min="0" value="${goal}"></div></div><button class="btn primary" style="margin-top:9px" onclick="saveSteps()">SAVE STEPS →</button></div>
  <div class="card"><div class="sectionhead"><h2>LOG MOVEMENT</h2></div><div class="grid g2"><div class="field"><label>Type</label><select id="at"><option>Swimming</option><option>Walking</option><option>Cycling</option><option>Running</option><option>Hiking</option><option>Football</option><option>Basketball</option><option>Yoga / Mobility</option><option>Other</option></select></div><div class="field"><label>Minutes</label><input id="amin" type="number"></div><div class="field"><label>Distance KM</label><input id="akm" type="number" step="0.1"></div><div class="field"><label>RPE 1–10</label><input id="arpe" type="number" min="1" max="10"></div></div><input id="anote" style="width:100%;margin-top:8px;padding:10px;background:#08080b;color:#fff;border:1px solid #303038;border-radius:10px" placeholder="Optional note"><button class="btn primary" style="margin-top:9px" onclick="addAct()">SAVE ACTIVITY →</button></div>
  <div class="section"><div class="sectionhead"><h2>WEEK ${S.week} MOVEMENT</h2><span class="tiny">${a.reduce((x,y)=>x+(+y.min||0),0)} minutes</span></div>${a.map((x,i)=>`<div class="command"><div class="between"><div><div class="big">${esc(x.type)}</div><div class="tiny">${x.min||0} min ${x.km?'• '+x.km+' km':''} ${x.rpe?'• RPE '+x.rpe:''}</div></div><button class="btn danger" onclick="delAct(${i})">DELETE</button></div><div class="tiny" style="margin-top:7px">${esc(x.note||'')}</div></div>`).join('')||'<div class="tiny">No activity logged yet.</div>'}</div>`;
 }
-function addAct(){S.activities[S.week]??=[];S.activities[S.week].push({type:at.value,min:amin.value,km:akm.value,rpe:arpe.value,note:anote.value});save();render();toast('ACTIVITY SAVED')}
+function saveSteps(){S.steps[dateKey()]=Math.max(0,+document.getElementById('stepInput').value||0);S.settings.stepsGoal=Math.max(0,+document.getElementById('stepGoal').value||8000);save();render();toast('STEPS SAVED')}
+function addAct(){S.activities[S.week]??=[];S.activities[S.week].push({type:at.value,min:amin.value,km:akm.value,rpe:arpe.value,note:anote.value,date:dateKey()});save();render();toast('ACTIVITY SAVED')}
 function delAct(i){S.activities[S.week].splice(i,1);save();render()}
 function body(){
- let c=S.body.current||{},r=S.readiness[S.week]||{};
- document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">BODY // RECOVERY</div><h1>KNOW THE ATHLETE.</h1><p>Track the frame, readiness and checkpoints. The app gives you signals; you decide how hard to push.</p></section>
+ let c=S.body.current||{},r=S.readiness[S.week]||{},cps=S.body.checkpoints||{};
+ const checkpointWeeks=[1,3,5,6];
+ document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">BODY // RECOVERY // CHECKPOINTS</div><h1>KNOW THE ATHLETE.</h1><p>Measurements every two weeks; Week 6 is the final review.</p></section>
  <div class="grid g3"><div class="metric"><div class="num">${c.weight||'—'}</div><div class="lbl">Weight kg</div></div><div class="metric"><div class="num">${c.waist||'—'}</div><div class="lbl">Waist cm</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div></div>
- <div class="card"><div class="sectionhead"><h2>BODY SNAPSHOT</h2><span class="tiny">update anytime</span></div><div class="grid g2">${[['weight','Weight kg'],['waist','Waist cm'],['chest','Chest cm'],['shoulders','Shoulders cm'],['arms','Upper arm cm'],['thigh','Thigh cm'],['calf','Calf cm'],['hips','Hips cm']].map(([k,n])=>`<div class="field"><label>${n}</label><input value="${esc(c[k]||'')}" onchange="S.body.current['${k}']=this.value;save();render()"></div>`).join('')}</div></div>
- <div class="command coach"><div class="between"><div><div class="eyebrow">READINESS // 1–5</div><div class="big">${readiness()||'SET YOUR SIGNALS'}</div></div><span class="tiny">sleep ↑ energy ↑ soreness ↓ stress ↓</span></div><div class="grid g2" style="margin-top:10px">${[['sleep','Sleep'],['energy','Energy'],['soreness','Soreness'],['stress','Stress']].map(([k,n])=>`<div class="field"><label>${n}</label><input type="number" min="1" max="5" value="${esc(r[k]||'')}" onchange="S.readiness[S.week]??={};S.readiness[S.week]['${k}']=Math.max(1,Math.min(5,+this.value||1));save();render()"></div>`).join('')}</div></div>
- <div class="card"><div class="sectionhead"><h2>6-WEEK CHECKPOINTS</h2><span class="tiny">every 2 weeks</span></div>${[1,2,3,4,5,6].map(w=>{let x=S.body.weeks[w]||{};return `<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><b>W${w}</b><span class="tiny">${x.weight||'—'} kg • ${x.waist||'—'} cm</span><button class="btn" onclick="editBody(${w})">EDIT</button></div>`}).join('')}</div>`;
+ <div class="card"><div class="sectionhead"><h2>BODY SNAPSHOT</h2><span class="tiny">current</span></div><div class="grid g2">${[['weight','Weight kg'],['waist','Waist cm'],['chest','Chest cm'],['shoulders','Shoulders cm'],['arms','Upper arm cm'],['thigh','Thigh cm'],['calf','Calf cm'],['hips','Hips cm']].map(([k,n])=>`<div class="field"><label>${n}</label><input value="${esc(c[k]||'')}" onchange="S.body.current['${k}']=this.value;save()"></div>`).join('')}</div></div>
+ <div class="card"><div class="sectionhead"><h2>CAMPAIGN CHECKPOINTS</h2><span class="tiny">W1 • W3 • W5 • W6</span></div>
+ ${checkpointWeeks.map(w=>{let x=cps[w]||{},due=w===S.week&&!x.done;return `<div class="command ${due?'red':''}" style="margin:8px 0"><div class="between"><div><div class="eyebrow">${w===6?'FINAL REVIEW':'CHECKPOINT'}</div><div class="big">WEEK ${w} ${x.done?'✓':''}</div><div class="tiny">${x.date||'Not recorded'} ${x.weight?`• ${x.weight} kg`:''} ${x.waist?`• ${x.waist} cm waist`:''}</div></div><button class="btn ${due?'primary':''}" onclick="checkpoint(${w})">${x.done?'EDIT':'RECORD'}</button></div></div>`}).join('')}</div>
+ <div class="command coach"><div class="between"><div><div class="eyebrow">READINESS // 1–5</div><div class="big">${readiness()||'SET YOUR SIGNALS'}</div></div><span class="tiny">sleep ↑ energy ↑ soreness ↓ stress ↓</span></div><div class="grid g2" style="margin-top:10px">${[['sleep','Sleep'],['energy','Energy'],['soreness','Soreness'],['stress','Stress']].map(([k,n])=>`<div class="field"><label>${n}</label><input type="number" min="1" max="5" value="${esc(r[k]||'')}" onchange="S.readiness[S.week]??={};S.readiness[S.week]['${k}']=Math.max(1,Math.min(5,+this.value||1));save();render()"></div>`).join('')}</div></div>`;
 }
-function editBody(w){let b=S.body.weeks[w]||{},x=prompt('Weight kg',b.weight||'');if(x===null)return; let y=prompt('Waist cm',b.waist||'');if(y===null)return;S.body.weeks[w]={weight:x,waist:y};save();render()}
+function checkpoint(w){
+ let old=S.body.checkpoints[w]||{},weight=prompt(`Week ${w} weight (kg)`,old.weight||S.body.current.weight||'');if(weight===null)return;
+ let waist=prompt(`Week ${w} waist (cm)`,old.waist||S.body.current.waist||'');if(waist===null)return;
+ let note=prompt(`Week ${w} note`,old.note||'');if(note===null)return;
+ S.body.checkpoints[w]={weight,waist,note,date:dateKey(),done:true};save();render();toast(`W${w} CHECKPOINT SAVED`)
+}
+function editBody(w){checkpoint(w)}
 function coachPage(){
  let c=coach(),done=weekDone(),mins=(S.activities[S.week]||[]).reduce((a,x)=>a+(+x.min||0),0);
  document.getElementById('app').innerHTML=`<section class="hero"><div class="eyebrow">COACH // DECISION ENGINE</div><h1>THE SYSTEM READS THE WORK.</h1><p>Simple signals from your logs: effort, consistency, activity and recovery. No fake precision.</p></section>
@@ -342,7 +315,7 @@ function data(){
  <div class="card"><div class="sectionhead"><h2>DANGER ZONE</h2></div><button class="btn danger" onclick="if(confirm('Delete all local FORGE data?')){S=fresh();save();render()}">RESET LOCAL DATA</button></div>`;
 }
 function nav(p){location.hash=p;render()}
-function exportJSON(){let blob=new Blob([JSON.stringify({app:'FORGE V4 COMMAND CENTER',exportedAt:new Date().toISOString(),data:S},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-v4-week-${S.week}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON EXPORTED')}
+function exportJSON(){let blob=new Blob([JSON.stringify({app:'FORGE V5 COMMAND CENTER',exportedAt:new Date().toISOString(),data:S},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-v5-week-${S.week}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON EXPORTED')}
 function importJSON(f){if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);S=x.data||x;save();syncTimeline();render();toast('IMPORTED')}catch(e){toast('INVALID JSON')}};r.readAsText(f)}
 function render(){syncTimeline();document.getElementById('weekBadge').textContent=`W${S.week}${timeline().pre?' • PREP':''}`;const p=location.hash.slice(1)||'home';document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.n===p));({home,workout,history,activity,body,coach:coachPage,data}[p]||home)()}
 
