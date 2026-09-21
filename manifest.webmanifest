@@ -1,9 +1,9 @@
 {
-  "name": "FORGE V3 \u2014 Personal Training OS",
-  "short_name": "FORGE",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#080808",
-  "theme_color": "#0a0a0a",
-  "description": "Local-first personal training tracker"
+  "name":"FORGE V3 — Personal Training OS",
+  "short_name":"FORGE",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#070708",
+  "theme_color":"#09090b",
+  "description":"FORGE V3 Unleashed — local-first personal training OS"
 }
