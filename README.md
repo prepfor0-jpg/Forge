@@ -1,29 +1,16 @@
-# FORGE V3 — Unleashed
+# FORGE V4 — Exact Replacement
 
-Upload these files to the root of the GitHub repository:
+These filenames are intentionally EXACTLY the same as the files currently in the GitHub Pages root.
 
-- `index.html`
-- `manifest.webmanifest`
-- `sw.js`
+Replace:
+- index.html
+- manifest.webmanifest
+- sw.js
 
-The app is local-first and stores training data in browser localStorage.
+Do NOT upload the files under their generated FORGE_V4_* names.
 
-## V3 features
-- Locked 6-week program starting Thursday 24 Sep 2026
-- Monday legs, Tuesday home-primary shoulders/arms, Thursday back+biceps strength/thickness, Friday athletic full body, Saturday chest/triceps strength+hypertrophy with skull crushers, Wednesday/Sunday recovery
-- Set-by-set kg × reps logging
-- RIR logging
-- Home alternatives
-- Rest timer
-- Activity/sport logging
-- Body measurements + weekly checkpoints
-- Readiness score
-- PR board
-- Set-density history
-- Coach guidance based on logged effort
-- Week guidance
-- JSON export/import
-- Mobile-first red/black UI
-- Offline service worker when hosted over HTTPS
-
-For installability as an app, enable GitHub Pages after uploading the files.
+The ZIP contains:
+index.html
+manifest.webmanifest
+sw.js
+README.md
