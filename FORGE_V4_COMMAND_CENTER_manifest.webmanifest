@@ -1,0 +1,10 @@
+{
+  "name":"FORGE V3 — Unleashed",
+  "short_name":"FORGE",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#070708",
+  "theme_color":"#08080a",
+  "description":"Local-first personal strength, hypertrophy and athletic training tracker.",
+  "icons":[]
+}
