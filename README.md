@@ -1,7 +1,5 @@
-FORGE V5.2 — ADAPTIVE TRAINER
+FORGE V5.2.1 Adaptive Trainer
 
-Exact replacement package. Replace the root files with these exact filenames.
+Exact replacement files: index.html, manifest.webmanifest, sw.js, icon-v521.svg, README.md.
 
-New: GYM/HOME switch, 15/20/30/FULL adaptive sessions, unique home movements per session, compact higher-rep execution, adaptive load suggestions, ramp guidance, steps, checkpoints and superset builder.
-
-Files: index.html, manifest.webmanifest, sw.js, icon-v52.svg, README.md
+Changes: ramp policy clarified; robust Command navigation; trainer-suggested supersets and drop-set opportunities; heavy main lifts are protected from automatic intensity techniques.

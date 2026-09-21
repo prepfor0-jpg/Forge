@@ -122,6 +122,7 @@ button{cursor:pointer}
 .bottom button b{display:block;font-size:17px;line-height:20px;margin-bottom:2px}
 .bottom button.active{color:#fff}.bottom button.active b{color:var(--red)}
 .toast{position:fixed;z-index:80;bottom:100px;left:50%;transform:translateX(-50%);background:#f4f4f5;color:#111;padding:10px 14px;border-radius:999px;font-size:10px;font-weight:1000;display:none;box-shadow:var(--shadow)}
+.suggestion{padding:10px;border:1px solid #3a1822;border-radius:13px;background:#0b080a;margin:7px 0}.suggestion b{font-size:12px}.suggestions{margin-bottom:8px}
 .hidden{display:none!important}
 @media(max-width:600px){
  .content{padding:11px}.hero{padding:19px 15px}.hero h1{font-size:30px}
@@ -137,7 +138,7 @@ button{cursor:pointer}
 <header class="top">
   <div class="topline">
     <div><div class="brand"><span class="brandmark"><svg viewBox="0 0 24 24"><path d="M13.8 2 5.2 13h5.1L9.9 22 18.8 10.2h-5.2L13.8 2Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M3 6h5M3 18h5" stroke="currentColor" stroke-width="1.5" opacity=".65"/></svg></span>FORGE <em>///</em></div><div class="sub">PERSONAL TRAINING COMMAND CENTER</div></div>
-    <div class="row"><span class="weekpill">V5.2</span><div class="weekpill" id="weekBadge">W1</div></div>
+    <div class="row"><span class="weekpill">V5.2.1</span><div class="weekpill" id="weekBadge">W1</div></div>
   </div>
 </header>
 <main id="app" class="content"></main>
@@ -174,7 +175,7 @@ Wednesday:{title:'RECOVERY',focus:'Mobility + easy movement',q:'Recovery is trai
 Sunday:{title:'ZONE 2 + RECOVERY',focus:'Cardiovascular fitness + recovery',q:'Move today. Come back stronger.',recovery:true}
 };
 const GUIDE={1:'Build the base • RIR 2–3',2:'Build • add a rep or small load when earned',3:'Progress • compounds RIR ~2, isolation RIR 1–2',4:'Push • selected isolation intensity only',5:'Consolidate • quality over failure',6:'Deload + review • reduce load 10–20% OR sets 30–40%, RIR 3–4'};
-function fresh(){return {version:5.2,week:1,day:'Thursday',profile:{name:'',startDate:START,targetWeight:'64–65 kg'},logs:{},activities:{},steps:{},body:{current:{},weeks:{},checkpoints:{}},readiness:{},supersets:{},session:{mode:'GYM',time:'FULL'},settings:{rest:90,stepsGoal:8000}}}
+function fresh(){return {version:5.21,week:1,day:'Thursday',profile:{name:'',startDate:START,targetWeight:'64–65 kg'},logs:{},activities:{},steps:{},body:{current:{},weeks:{},checkpoints:{}},readiness:{},supersets:{},session:{mode:'GYM',time:'FULL'},settings:{rest:90,stepsGoal:8000}}}
 function timeline(){
  const start=new Date(START+'T00:00:00'), now=new Date();
  const diff=Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-start)/86400000);
@@ -190,8 +191,8 @@ let S=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){r
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function toast(x){let t=document.getElementById('toast');t.textContent=x;t.style.display='block';clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.style.display='none',1500)}
-function nav(x){location.hash=x;render()}
-document.querySelectorAll('.bottom button').forEach(b=>b.onclick=()=>nav(b.dataset.n));addEventListener('hashchange',render);
+function nav(x){if(location.hash.slice(1)!==x)location.hash=x;render();window.scrollTo({top:0,behavior:'instant'});}
+document.querySelectorAll('.bottom button').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();nav(b.dataset.n)}));addEventListener('hashchange',()=>render());
 function log(){let k=`w${S.week}_${S.day}`;return S.logs[k]??(S.logs[k]={sets:{},rir:{},done:{},notes:''})}
 function setDay(d){S.day=d;save();render()} function setWeek(w){S.week=+w;save();render()}
 function dayBar(){return `<div class="days">${DAYS.map(d=>`<button class="day ${S.day===d?'active':''}" onclick="setDay('${d}')">${d.slice(0,3)}</button>`).join('')}</div>`}
@@ -224,10 +225,32 @@ function suggestedLoad(name){
  let p=prMap()[name];if(!p||!p.weight)return null;
  return Math.max(0.5,Math.round(p.weight*1.025*2)/2);
 }
-function rampFor(name){
- let p=prMap()[name];if(!p||!p.weight)return ['Empty / very light × 8–10','~50% × 5','~65% × 3','~75–80% × 1–2'];
+function rampPolicy(e){
+ const tag=String(e?.[2]||'').toUpperCase();
+ if(tag.includes('MAIN'))return {label:'RAMP BEFORE FIRST WORKING SET',steps:true};
+ if(tag.includes('STRENGTH')||tag.includes('UNILATERAL')||tag.includes('POWER'))return {label:'1–2 PREP SETS BEFORE WORKING SETS',steps:true};
+ return {label:'NO FORMAL RAMP REQUIRED',steps:false};
+}
+function rampFor(name,e){
+ let p=prMap()[name];
+ const main=String(e?.[2]||'').toUpperCase().includes('MAIN');
+ if(!p||!p.weight)return main?['Empty / very light × 8–10','~50% × 5','~65% × 3','~75–80% × 1–2']:['Light × 8–10','Moderate × 5'];
+ if(!main)return [`${Math.max(.5,Math.round(p.weight*.5*2)/2)} kg × 8–10`,`~${Math.max(.5,Math.round(p.weight*.7*2)/2)} kg × 5`];
  return [`${Math.max(.5,Math.round(p.weight*.4*2)/2)} kg × 8–10`,`~${Math.max(.5,Math.round(p.weight*.6*2)/2)} kg × 5`,`~${Math.max(.5,Math.round(p.weight*.75*2)/2)} kg × 3`,`~${Math.max(.5,Math.round(p.weight*.85*2)/2)} kg × 1–2`];
 }
+function suggestionFor(exercises){
+ const items=exercises.map((e,i)=>({e,i}));
+ const iso=items.filter(x=>/ISOLATION|HYPERTROPHY|TRICEPS|BICEPS|ACCESSORY|REAR|DELTA|ARMS/i.test(x.e[2]));
+ const upper=items.filter(x=>/CHEST|BACK|PULL|ROW|PRESS|SHOULDER/i.test(x.e[2]+' '+x.e[0]));
+ const pairs=[];
+ const pushPull=upper.find(x=>/PRESS|CHEST|SHOULDER/i.test(x.e[0]+' '+x.e[2]));
+ const row=upper.find(x=>/ROW|PULL|BACK/i.test(x.e[0]+' '+x.e[2]));
+ if(pushPull&&row)pairs.push({type:'SUPERSET',a:pushPull.e[0],b:row.e[0],why:'Push + pull pairing keeps the session moving without pairing two demanding lifts.'});
+ if(iso.length>=2)pairs.push({type:'SUPERSET',a:iso[0].e[0],b:iso[1].e[0],why:'Accessory pairing for time-efficient volume.'});
+ const drop=iso.find(x=>!/MAIN|POWER/i.test(x.e[2]));
+ return {pairs:pairs.slice(0,2),drop:drop?drop.e[0]:null};
+}
+function createSuggestedSuperset(a,b){createSuperset(a,b)}
 function isPaired(name){return Object.values(S.supersets||{}).find(x=>x.includes(name))}
 function createSuperset(a,b){if(!a||!b||a===b){toast('SELECT TWO DIFFERENT EXERCISES');return}S.supersets[`SS${Date.now()}`]=[a,b];save();render();toast('SUPERSET CREATED')}
 function removeSuperset(id){delete S.supersets[id];save();render();toast('SUPERSET REMOVED')}
@@ -306,7 +329,7 @@ function workout(){
   const n=e[0],target=adaptiveTarget(e),sets=adaptiveSets(e),zs=L.sets?.[n]||[],main=e[2].includes('MAIN'),sug=suggestedLoad(variant)||suggestedLoad(n),pair=isPaired(n); let rows='';
   for(let j=0;j<sets;j++){const z=zs[j]||{};rows+=`<div class="setrow"><div class="setno">${String(j+1).padStart(2,'0')}</div><input type="number" step="0.5" placeholder="${sug||'kg'}" value="${z.kg??''}" onchange="setVal('${esc(n)}',${j},'kg',this.value,'${esc(variant)}')"><input type="number" placeholder="reps" value="${z.reps??''}" onchange="setVal('${esc(n)}',${j},'reps',this.value,'${esc(variant)}')"><input type="number" min="0" max="5" placeholder="RIR" value="${z.rir??''}" onchange="setVal('${esc(n)}',${j},'rir',this.value,'${esc(variant)}')"><button class="setdone ${z.done?'on':''}" onclick="toggleSet('${esc(n)}',${j})">${z.done?'✓':'○'}</button></div>`}
   return `<div class="exercise ${main?'main':''}"><div class="ex-top"><div><div class="eyebrow">${String(i+1).padStart(2,'0')} / ${selected.length}</div><div class="exname">${esc(variant)} ${pair?'<span class="weekpill">SS</span>':''}</div><div class="exmeta">${esc(n)} • ${esc(e[2])}</div></div><span class="weekpill">${target}</span></div>
-  <div class="command ${main?'red':''}" style="margin-top:9px;padding:10px"><div class="eyebrow">${main?'RAMP SETS // PRIMARY LIFT':'RAMP SETS // PREP'}</div><div class="tiny">${rampFor(variant).join('  →  ')}</div></div>
+  ${(()=>{const rp=rampPolicy(e);return `<div class="command ${main?'red':''}" style="margin-top:9px;padding:10px"><div class="eyebrow">${rp.label}</div>${rp.steps?`<div class="tiny">${rampFor(variant,e).join('  →  ')}</div>`:`<div class="tiny">Warm up as needed. Your working sets below are the actual logged sets — no ramp set required for every set.</div>`}</div>`})()}
   <div class="target">WORKING SETS <b>${target}</b> ${sug?`<span class="tiny">• suggested next load ${sug} kg</span>`:''}</div>
   <div class="sethead"><span>SET</span><span>KG</span><span>REPS</span><span>RIR</span><span>✓</span></div>${rows}
   <div class="alt"><b>ADAPTATION:</b> ${sessionMode()==='HOME'?'HOME MODE • no duplicate movement in this session':'GYM MODE • locked program exercise'} ${e[3]?.length?`• Alternatives: ${e[3].map(esc).join(' • ')}`:''}</div>
@@ -316,7 +339,9 @@ function workout(){
  <div class="card" style="border-color:#6d1828;background:linear-gradient(145deg,#19070c,#0d0d10)"><div class="sectionhead"><h2>TODAY'S ADAPTIVE SESSION</h2><span class="weekpill">${plan.mins}</span></div><div class="tiny" style="margin:6px 0 10px">Same training intent. The engine changes equipment and session length without changing your program.</div><div class="grid g2"><div><label class="tiny">TRAINING MODE</label><div class="seg"><button class="btn ${sessionMode()==='GYM'?'primary':''}" onclick="setSessionMode('GYM')">GYM</button><button class="btn ${sessionMode()==='HOME'?'primary':''}" onclick="setSessionMode('HOME')">HOME</button></div></div><div><label class="tiny">TIME AVAILABLE</label><div class="seg">${['15','20','30','FULL'].map(x=>`<button class="btn ${sessionTime()===x?'primary':''}" onclick="setSessionTime('${x}')">${x==='FULL'?'FULL':x+'m'}</button>`).join('')}</div></div></div><div class="command" style="margin-top:10px"><div class="eyebrow">TRAINER PLAN</div><div class="big">${selected.length} exercises • ${sessionTime()==='FULL'?'full prescription':sessionTime()+' minute compression'}</div><div class="tiny">${sessionMode()==='HOME'?'Home substitutions are unique within this session — no repeated movement.':'Gym mode uses the locked program.'}</div></div></div>
  <div class="grid g3"><div class="metric"><div class="num">${Object.keys(L.sets||{}).length}/${selected.length}</div><div class="lbl">Exercises logged</div></div><div class="metric"><div class="num">${Object.values(L.sets||{}).flat().filter(x=>x?.done).length}</div><div class="lbl">Sets complete</div></div><div class="metric"><div class="num">${readiness()||'—'}</div><div class="lbl">Readiness</div></div></div>
  <div class="sessionbar"><div class="between"><div><div class="eyebrow">SESSION CONTROL</div><div class="tiny">${sessionTime()==='FULL'?'Full prescription':'Compressed execution'} • ramp → working sets → RIR → complete.</div></div><button class="btn primary" onclick="completeDay()">COMPLETE SESSION</button></div><div class="timerbox" id="timer">01:30</div><div class="row"><button class="btn" onclick="timerStart(S.settings.rest)">START REST</button><button class="btn ghost" onclick="timerStop()">RESET</button></div></div>
- <div class="card" style="border-color:#6d1828;background:linear-gradient(145deg,#19070c,#0d0d10)"><div class="sectionhead"><h2>🔗 SUPERSET BUILDER</h2><span class="weekpill">NEW</span></div><div class="tiny" style="margin:6px 0 10px">Pair two exercises to run them back-to-back with one shared rest period.</div><div class="grid g2"><div class="field"><label>Exercise A</label><select id="ssa">${options}</select></div><div class="field"><label>Exercise B</label><select id="ssb">${options}</select></div></div><button class="btn primary" style="margin-top:9px" onclick="createSuperset(document.getElementById('ssa').value,document.getElementById('ssb').value)">CREATE SUPERSET →</button>${supers?`<div style="margin-top:9px">${supers}</div>`:`<div class="alt"><b>NO SUPERSETS YET:</b> Choose two exercises above.</div>`}</div>
+ <div class="card" style="border-color:#6d1828;background:linear-gradient(145deg,#19070c,#0d0d10)"><div class="sectionhead"><h2>⚡ INTENSITY BUILDER</h2><span class="weekpill">TRAINER SUGGESTIONS</span></div><div class="tiny" style="margin:6px 0 10px">FORGE suggests where a superset or drop set fits. Heavy main lifts stay protected unless you manually pair them.</div>
+ ${(()=>{const sug=suggestionFor(exs);return `<div class="suggestions">${sug.pairs.map(x=>`<div class="suggestion"><div class="between"><div><div class="eyebrow">SUGGESTED SUPERSET</div><b>${esc(x.a)} + ${esc(x.b)}</b></div><button class="btn primary" onclick="createSuggestedSuperset('${esc(x.a)}','${esc(x.b)}')">USE</button></div><div class="tiny" style="margin-top:5px">${esc(x.why)}</div></div>`).join('')}${sug.drop?`<div class="suggestion"><div class="between"><div><div class="eyebrow">SUGGESTED DROP SET</div><b>${esc(sug.drop)}</b></div><button class="btn" onclick="toast('DROP SET: FINISH LAST WORKING SET, REDUCE LOAD 20–30%, THEN CONTINUE WITH CLEAN REPS')">USE</button></div><div class="tiny" style="margin-top:5px">Best used on a safe isolation/accessory movement, not the main lift.</div></div>`:''}${!sug.pairs.length&&!sug.drop?'<div class="alt">No intensity technique recommended today. Keep the session clean and progress normally.</div>':''}</div>`})()}
+ <div class="sectionhead" style="margin-top:12px"><h2>SUPERSET BUILDER</h2></div><div class="tiny" style="margin:6px 0 10px">You can still manually pair any two exercises.</div><div class="grid g2"><div class="field"><label>Exercise A</label><select id="ssa">${options}</select></div><div class="field"><label>Exercise B</label><select id="ssb">${options}</select></div></div><button class="btn primary" style="margin-top:9px" onclick="createSuperset(document.getElementById('ssa').value,document.getElementById('ssb').value)">CREATE SUPERSET →</button>${supers?`<div style="margin-top:9px">${supers}</div>`:`<div class="alt"><b>NO SUPERSETS YET:</b> Choose two exercises above.</div>`}</div>
  ${exhtml}<div class="command" style="margin-top:14px"><div class="eyebrow">SAVE THE DAY</div><div class="big">${L.completed?'SESSION LOCKED ✓':'Finish your working sets, then complete the session.'}</div><div class="tiny" style="margin-top:5px">Your logs drive PRs, progression signals and weekly review.</div></div>`;
 }
 function setVal(n,i,k,v,variant){S.logs[`w${S.week}_${S.day}`]??={sets:{},completed:false};S.logs[`w${S.week}_${S.day}`].sets[n]??=[];S.logs[`w${S.week}_${S.day}`].sets[n][i]??={};S.logs[`w${S.week}_${S.day}`].sets[n][i][k]=v===''?'':(+v);S.logs[`w${S.week}_${S.day}`].sets[n][i].exercise=variant||n;S.logs[`w${S.week}_${S.day}`].sets[n][i].mode=sessionMode();save()}
@@ -380,8 +405,7 @@ function data(){
  <div class="card"><div class="sectionhead"><h2>BACKUP</h2></div><div class="row"><button class="btn primary" onclick="exportJSON()">EXPORT JSON</button><button class="btn" onclick="document.getElementById('imp').click()">IMPORT JSON</button><input id="imp" class="hidden" type="file" accept=".json" onchange="importJSON(this.files[0])"></div></div>
  <div class="card"><div class="sectionhead"><h2>DANGER ZONE</h2></div><button class="btn danger" onclick="if(confirm('Delete all local FORGE data?')){S=fresh();save();render()}">RESET LOCAL DATA</button></div>`;
 }
-function nav(p){location.hash=p;render()}
-function exportJSON(){let blob=new Blob([JSON.stringify({app:'FORGE V5.2 ADAPTIVE TRAINER',exportedAt:new Date().toISOString(),data:S},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-v5-week-${S.week}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON EXPORTED')}
+function exportJSON(){let blob=new Blob([JSON.stringify({app:'FORGE V5.2.1 ADAPTIVE TRAINER',exportedAt:new Date().toISOString(),data:S},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`forge-v5-week-${S.week}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);toast('JSON EXPORTED')}
 function importJSON(f){if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);S=x.data||x;save();syncTimeline();render();toast('IMPORTED')}catch(e){toast('INVALID JSON')}};r.readAsText(f)}
 function render(){syncTimeline();document.getElementById('weekBadge').textContent=`W${S.week}${timeline().pre?' • PREP':''}`;const p=location.hash.slice(1)||'home';document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.n===p));({home,workout,history,activity,body,coach:coachPage,data}[p]||home)()}
 
